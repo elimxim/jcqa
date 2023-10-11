@@ -8,18 +8,17 @@ This is not a complete collection. I hope new interesting ideas for questions wi
 **Table of content**
 
 - [Motivation](#motivation)
-- [Synopsis](#synopsis)
 - [Questions](#questions)
   - [1. The keyword `synchronized`](#q-1)
     - [1.1 Intrinsic lock reentrancy](#q-1-1)
     - [1.2 Synchronized method overriding](#q-1-2)
     - [1.3 Static fields synchronization](#q-1-3)
     - [1.4 Inner class lock](#q-1-4)
-    - [1.5 Poor synchronization <sup>&laquo;tricky&raquo;</sup>](#q-1-5)
-    - [1.6 Different locks <sup>&laquo;tricky&raquo;</sup>](#q-1-6)
-    - [1.7 The &laquo;Print array&raquo; task](#q-1-7)
-    - [1.8 The &laquo;Money transfer&raquo; deadlock]
-    - [1.9 The &laquo;Swap value&raquo; deadlock]
+    - [1.5 Using `getClass()`](#q-1-5)
+    - [1.6 Read-write locks](#q-1-6)
+    - [1.7 Task &laquo;Print array&raquo;](#q-1-7)
+    - [1.8 Task &laquo;Money transfer&raquo;](#q-1-8)
+    - [1.9 Task &laquo;Swap value&raquo;](#q-1-9)
   - [2. The keyword `volatile`](#q-2)
     - [2.1 `volatile` atomicity](#q-2-1)
     - [2.2 `volatile` visibility](#q-2-2)
@@ -29,15 +28,15 @@ This is not a complete collection. I hope new interesting ideas for questions wi
     - [3.2 Starting a thread twice]
     - [3.3 Stopping a thread]
     - [3.4 Joining a thread]
-    - [3.5 Another joining a thread <sup>&laquo;tricky&raquo;</sup>]
-    - [3.6 Waiting without obtaining a lock <sup>&laquo;tricky&raquo;</sup>]
+    - [3.5 Another joining a thread]
+    - [3.6 Waiting without obtaining a lock]
     - [3.7 `Thread.sleep` vs `Object.wait`]
     - [3.8 Thread interruption]
     - [3.9 `Object.notify` vs `Object.notifyAll`. Missed Signals]
     - [3.10 Options of `Object.notifyAll`]
     - [3.11 Spurious wakeups]
   - [4. The package `java.util.concurrent`](#q-4)
-    - [4.1 Thread Pool shutdown]
+    - [4.1 Thread Pool `shutdown` vs `shutdownNow`]
   - [5. Thread safety](#q-5)
     - [5.1 Immutable classes]
     - [5.2 Singleton implementation]
@@ -66,15 +65,6 @@ there are two main footnotes:
 - `"quote" <sup>[JCP]</sup>` or `[JCP]: "quote"` - means the quote is from "Java Concurrency in Practice"
 - `"quote" <sup>[CPJ]</sup>` or `[CPJ]: "quote"` - means the quote is from "Concurrent Programming in Java ..."
 
-## Synopsis <a name="synopsis"/>
-
-Some questions are too tricky to ask, but they have also been included here for fun. 
-These questions will be marked as <sup>&laquo;tricky&raquo;</sup>. To simplify the questions,
-some of them contain names of methods or classes that relate to the code below. 
-Sometimes questions are accompanied by examples, then a question has a link to the code.
-
-The answers follow the questions, but they are hidden to avoid spoilers.
-
 ## Questions <a name="questions"/>
 
 There are 5 main topics that contain a number of questions:
@@ -84,6 +74,10 @@ There are 5 main topics that contain a number of questions:
 - the class `java.lang.Thread`
 - the package `java.util.concurrent`
 - thread safety
+
+Some additional questions I found while reading books are not suitable interview questions.
+
+The answers follow the questions, but they are hidden to avoid spoilers.
 
 ### 1. The keyword `synchronized` <a name="q-1"/>
 
@@ -216,7 +210,7 @@ a lock of its outer class with: `synchronized(OuterClass.this)`.*
 
 </details>
 
-#### 1.5 Poor synchronization <sup>&laquo;tricky&raquo;</sup> <a name="q-1-5"/>
+#### 1.5 Using `getClass()` <a name="q-1-5"/>
 
 Q: *What is the danger of synchronization in the following code and is it wrong in the example below?*
 
@@ -261,7 +255,7 @@ because both `getClass()` expressions return corresponding `Class` instances.*
 
 </details>
 
-#### 1.6 Multiple locks <sup>&laquo;tricky&raquo;</sup> <a name="q-1-6"/>
+#### 1.6 Read-write locks <a name="q-1-6"/>
 
 Q: "Is the `Vehicle` class thread-safe?"
 
@@ -293,7 +287,7 @@ A: *The `Vehicle` class isn't thread-safe, because different locks are used to r
 
 </details>
 
-#### 1.7 The &laquo;Print array&raquo; task <a name="q-1-7"/>
+#### 1.7 Task &laquo;Print array&raquo; <a name="q-1-7"/>
 
 Q: *The implementation of the `print` method isn't consistent: the method might print the same element 
 twice if another thread rearranges elements. How to fix this method?*
@@ -364,11 +358,219 @@ class RearrangeableArray<Integer> {
 
 </details>
 
-#### 1.8 <a name="q-1-8"/>
+#### 1.8 Task &laquo;Money transfer&raquo; <a name="q-1-8"/>
 
+Q: *What problem might occur in the following code? How to fix it?*
 
-#### 1.9 <a name="q-1-9"/>
+```java
+class Account {
+    private BigDecimal balance;
 
+    public void setInitialBalance(BigDecimal initial) {
+        this.balance = initial;
+    }
+    
+    public balance getBalance() {
+        return balance;
+    }
+    
+    public void debit(BigDecimal amount) {
+        this.balance = balance.subtract(amount);
+    }
+    
+    public void credit(BigDecimal amount) {
+        this.balance = balance.add(amount);
+    }
+}
+
+class Accountant {
+    public void transferMoney(Account fromAccount, Account toAccount, BigDecimal amount) {
+        synchronized (fromAccount) {
+            synchronized (toAccount) {
+                if (fromAccount.getBalance().compareTo(amount) < 0)
+                    throw new RuntimeException("Insufficient funds");
+                else {
+                    fromAccount.debit(amount);
+                    toAccount.credit(amount);
+                }
+            }
+        }
+    }
+}
+```
+
+The above code is based on an example from the [JCP].
+
+<details>
+    <summary>The Answer</summary>
+
+A: *The above code is deadlock-prone. The solution is to avoid locking on method arguments.*
+
+[JCP]:
+
+> How can `transferMoney` deadlock? It may appear as if all the threads acquire their locks in the same order, 
+> but in fact the lock order depends on the order of arguments passed to transferMoney, and these in turn might 
+> depend on external inputs. Deadlock can occur if two threads call `transferMoney` at the same time, 
+> one transferring from X to Y, and the other doing the opposite:
+> 
+> - A: `transferMoney(myAccount, yourAccount, 10);`
+> - B: `transferMoney(yourAccount, myAccount, 20);`
+> 
+> With unlucky timing, A will acquire the lock on `myAccount` and wait for the lock on `yourAccount`, 
+> while B is holding the lock on `yourAccount` and waiting for the lock on `myAccount`.
+
+*For example using `ReentranLock`:*
+
+```java
+class Account {
+    public final ReentrantLock lock = new ReentrantLock();
+    
+    private BigDecimal balance;
+
+    public void setInitialBalance(BigDecimal initial) {
+        this.balance = initial;
+    }
+    
+    public BigDecimal getBalance() {
+        return balance;
+    }
+
+    public void debit(BigDecimal amount) {
+        this.balance = balance.subtract(amount);
+    }
+
+    public void credit(BigDecimal amount) {
+        this.balance = balance.add(amount);
+    }
+}
+
+class Accountant {
+    public void transferMoney(Account fromAccount, Account toAccount, BigDecimal amount) {
+        if (fromAccount == toAccount) { // alias check
+            return;
+        }
+        
+        if (fromAccount.lock.tryLock()) {
+            try {
+                if (toAccount.lock.tryLock()) {
+                    try {
+                        fromAccount.debit(amount);
+                        toAccount.credit(amount);                       
+                    } finally {
+                        toAccount.lock.unlock();
+                    }
+                } else {
+                    throw new RuntimeException("toAccount is currently busy");
+                }               
+            } finally {
+                fromAccount.lock.unlock();
+            }
+        } else {
+            throw new RuntimeException("fromAccount is currently busy");
+        }
+    }
+}
+```
+
+</details>
+
+#### 1.9 Task &laquo;Swap value&raquo; <a name="q-1-9"/>
+
+Q: *What problem might occur in the following code? How to fix it?*
+
+```java
+class Cell {
+    private long value;
+    
+    synchronized long getValue() { 
+        return value; 
+    }
+    
+    synchronized void setValue(long v) { 
+        value = v; 
+    }
+    
+    synchronized void swapValue(Cell other) {
+        long t = getValue();
+        long v = other.getValue();
+        setValue(v);
+        other.setValue(t);
+    }
+} 
+```
+
+The above code is based on an example from the [CPJ].
+
+A: *The above code is deadlock-prone. The solution is to avoid locking on method arguments.*
+
+[CPJ]:
+
+> SwapValue is a synchronized *multiparty* action — one that intrinsically acquires locks on multiple objects.
+> Without further precautions, it is possible for two different threads, one running `a.swapValue(b)`,
+> and the other running `b.swapValue(a)`, to deadlock when encountering the following trace:
+>
+> | Thread 1                                                            | Thread 2                                                            |
+> |---------------------------------------------------------------------|---------------------------------------------------------------------|
+> | acquire lock for `a` on entering `a.swapValue(b)`                   |                                                                     |
+> | pass lock for `a` (since already held) on entering `t = getValue()` | acquire lock for `b` on entering `b.swapValue(a)`                   |
+> | block waiting for lock for `b` on entering `v = other.getValue()`   | pass lock for `b` (since already held) on entering `t = getValue()` |
+> |                                                                     | block waiting for lock for `a` on entering `v = other.getValue()`   |
+
+*For example using `ReentranLock` and changing the method to return a `boolean` value:*
+
+```java
+class Cell {
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    private long value;
+    
+    long getValue() {
+        lock.lock();
+        try {
+            return value;
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    void setValue(long v) {
+        lock.lock();
+        try {
+            value = v;
+        } finally {
+            lock.unlock();
+        }
+    }
+    
+    synchronized boolean swapValue(Cell other) {
+        if (other == this) {  // alias check
+            return true;
+        }
+        
+        if (lock.tryLock()) {
+            long t = getValue();
+            try {
+                if (other.lock.tryLock()) {
+                    try {
+                        long v = other.getValue();
+                        setValue(v);
+                        other.setValue(t);
+                        return true;
+                    } finally {
+                        other.lock.unlock();
+                    }
+                } else {
+                    return false;
+                }
+            } finally {
+                lock.unlock();
+            }
+        } else {
+            return false;
+        }
+    }
+} 
+```
 
 ### 2. The keyword `volatile` <a name="q-2"/>
 
@@ -461,13 +663,13 @@ A: *In "Example 1" there could be all the options because `T2` may see the chang
 but not see the changed `a` or vice versa, or will not be able to see all the changes, 
 or will be able to see all the changes. In "Example 2" only one option is available.*
 
-Example 1:
+*Example 1:*
 
 | a | 0 | 0 | 1 | 1 |
 |---|---|---|---|---|
 | b | 0 | 1 | 0 | 1 |
 
-Example 2:
+*Example 2:*
 
 | a | 1 |
 |---|---|
