@@ -37,9 +37,10 @@ This is not a complete collection. I hope new interesting ideas for questions wi
     - [3.11 Spurious wakeups]
   - [4. The package `java.util.concurrent`](#q-4)
     - [4.1 Thread Pool `shutdown` vs `shutdownNow`]
-  - [5. Thread safety](#q-5)
-    - [5.1 Immutable classes]
-    - [5.2 Singleton implementation]
+  - [5. Safe publication](#q-5)
+    - [5.1 Immutable classes](#q-5-1) // TODO
+    - [5.2 Lazy loading](#q-5-2)
+    - [5.3 Double-checked locking](#q-5-3)
 
 
 ## Motivation <a name="motivation"/>
@@ -62,8 +63,8 @@ all the interview questions in one place.
 There are many quotes from these books here. To easily identify which quote is from which book, 
 there are two main footnotes:
 
-- `"quote" <sup>[JCP]</sup>` or `[JCP]: "quote"` - means the quote is from "Java Concurrency in Practice"
-- `"quote" <sup>[CPJ]</sup>` or `[CPJ]: "quote"` - means the quote is from "Concurrent Programming in Java ..."
+- `[JCP]: "quote"` - means the quote is from "Java Concurrency in Practice"
+- `[CPJ]: "quote"` - means the quote is from "Concurrent Programming in Java ..."
 
 ## Questions <a name="questions"/>
 
@@ -73,7 +74,7 @@ There are 5 main topics that contain a number of questions:
 - the keyword `volatile`
 - the class `java.lang.Thread`
 - the package `java.util.concurrent`
-- thread safety
+- safe publication
 
 Some additional questions I found while reading books are not suitable interview questions.
 
@@ -399,7 +400,7 @@ class Accountant {
 }
 ```
 
-The above code is based on an example from the [JCP].
+The above code is based on an example from [JCP].
 
 <details>
     <summary>The Answer</summary>
@@ -499,7 +500,10 @@ class Cell {
 } 
 ```
 
-The above code is based on an example from the [CPJ].
+The above code is based on an example from [CPJ].
+
+<details>
+    <summary>The Answer</summary>
 
 A: *The above code is deadlock-prone. The solution is to avoid locking on method arguments.*
 
@@ -572,6 +576,8 @@ class Cell {
 } 
 ```
 
+</details>
+
 ### 2. The keyword `volatile` <a name="q-2"/>
 
 #### 2.1 `volatile` atomicity <a name="q-2-1"/>
@@ -638,6 +644,8 @@ Given:
 int a = 0;
 int b = 0;
 
+Action:
+
 | T1    | T2       |
 | a = 1 | print(b) |
 | b = 1 | print(a) |
@@ -650,6 +658,8 @@ Given:
 
 int a = 0;
 volatile int b = 0;
+
+Action:
 
 | T1    | T2       |
 | a = 1 | print(b) |
@@ -675,9 +685,9 @@ or will be able to see all the changes. In "Example 2" only one option is availa
 |---|---|
 | b | 1 |
 
-[CPJ]: 
+[JCP]: 
 
-> The JMM defines a partial ordering2 called *happens-before* on all actions
+> The JMM defines a partial ordering<sup>2</sup> called *happens-before* on all actions
 > within the program. To guarantee that the thread executing action B can see the
 > results of action A (whether or not A and B occur in different threads), there must
 > be a *happens-before* relationship between A and B. In the absence of a *happens-before*
@@ -688,7 +698,7 @@ or will be able to see all the changes. In "Example 2" only one option is availa
 > day to express preferences; we may prefer sushi to cheeseburgers and Mozart to Mahler, but we don’t 
 > necessarily have a clear preference between cheeseburgers and Mozart.</sub>
 
-[CPJ]:
+[JCP]:
 
 > The rules for *happens-before* are:
 > - **Program order rule**. Each action in a thread *happens-before* every action in that thread 
@@ -711,6 +721,20 @@ or will be able to see all the changes. In "Example 2" only one option is availa
 > 
 > <sub>3. Locks and unlocks on explicit `Lock` objects have the same memory semantics as intrinsic locks.</sub>  
 > <sub>4. Reads and writes of atomic variables have the same memory semantics as volatile variables.</sub>
+
+[JCP]:
+
+> Other *happens-before* orderings guaranteed by the class library include:
+> - Placing an item in a thread-safe collection *happens-before* another thread retrieves that item from the collection;
+> - Counting down on a `CountDownLatch` *happens-before* a thread returns from await on that latch;
+> - Releasing a permit to a `Semaphore` *happens-before* acquiring a permit from that same `Semaphore`;
+> - Actions taken by the task represented by a `Future` *happens-before* 
+> another thread successfully returns from `Future.get`;
+> - Submitting a `Runnable` or `Callable` to an `Executor` *happens-before* the task begins execution; and
+> - A thread arriving at a `CyclicBarrier` or `Exchanger` *happens-before* the other threads are released 
+> from that same barrier or exchange point. If `CyclicBarrier` uses a barrier action, 
+> arriving at the barrier *happens-before* the barrier action, which in turn *happens-before* 
+> threads are released from the barrier.
 
 </details>
 
@@ -743,4 +767,138 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 ### 4. The package `java.util.concurrent` <a name="q-4"/>
 
-### 5. Thread safety <a name="q-5"/>
+### 5. Safe publication <a name="q-5"/>
+
+#### 5.1 Immutable classes <a name="q-5-1"/>
+
+Q: **
+
+TODO
+
+#### 5.2 Lazy loading <a name="q-5-1"/>
+
+Q: *How to make the following lazy-load class thread-safe? The class is too large to preload.*
+
+```java
+@NotTreadSafe
+public class UnsafeLazyInitialization {
+    private static Resource resource;
+    
+    public static Resource getInstance() {
+        if (resource == null) {
+            resource = new Resource(); // unsafe publication
+        }
+        return resource;
+    }
+}
+```
+
+*This is not compliant:*
+
+```java
+@TreadSafe
+public class EagerInitialization {
+    private static final Resource resource = new Resource();
+    
+    public static Resource getInstance() {
+        return resource;
+    }
+}
+```
+
+The above code is from [JCP].
+
+<details>
+    <summary>The Answer</summary>
+
+A: *There are several options to make the lazy-load `Singleton` class thread-safe:*
+
+*Example 1:*
+
+```java
+@TreadSafe
+public class SafeLazyInitialization {
+    private static Resource instance;
+    
+    public synchronized static Resource getInstance() {
+        if (resource == null) {
+            resource = new Resource();
+        }
+        return resource;
+    }
+}
+```
+
+The above code is from [JCP].
+
+[JCP]:
+
+> Because the code path through `getInstance` is fairly short (a test and a predicted branch), 
+> if `getInstance` is not called frequently by many threads, there is little enough contention 
+> for the class lock that this approach offers adequate performance
+
+*Example 2:*
+
+```java
+@TreadSafe
+public class ResourceFactory {
+    private static class ResourceHolder {
+        public static final Resource resource = new Resource();
+    } 
+    
+    public static Resource getInstance() {
+        return ResourceHolder.resource;
+    }
+}
+```
+
+The above code is from [JCP].
+
+[JCP]:
+
+> The JVM defers initializing the ResourceHolder class until it is actually used [JLS 12.4.1], and because the
+> Resource is initialized with a static initializer, no additional synchronization is needed. 
+> The first call to getResource by any thread causes ResourceHolder to be loaded and initialized, 
+> at which time the initialization of the Resource happens through the static initializer.
+
+</details>
+
+#### 5.3 Double-checked locking <a name="q-5-3"/>
+
+Q: *Is the following class tread-safe?*
+
+```java
+public class DoubleCheckedLocking {
+    private static Resource resource;
+    
+    public static Resource getInstance() {
+        if (resource == null) {
+            synchronized (DoubleCheckedLocking.class) {
+                if (resource == null) {
+                    resource = new Resource();
+                }
+            }
+        }
+        return resource;
+    }
+}
+```
+
+<details>
+    <summary>The Answer</summary>
+
+A: *The code above is dangerous, or at least was dangerous in earlier versions of the JDK.
+The answer needs to be double-checked.*
+
+[JCP]:
+
+> No book on concurrency would be complete without a discussion of the infamous double-checked 
+> locking (DCL) antipattern ... .  
+> The real problem with DCL is the assumption that the worst thing that can happen when reading 
+> a shared object reference without synchronization is to erroneously see a stale value 
+> (in this case, null); in that case the DCL idiom compensates for this risk by trying again 
+> with the lock held. But the worst case is actually considerably worse - it is possible to see 
+> a current value of the reference but stale values for the object’s state, meaning that 
+> the object could be seen to be in an invalid or incorrect state.
+ 
+</details>
