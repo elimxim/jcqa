@@ -16,28 +16,27 @@ This is a collection of questions that I heard during an interviews or found whi
     - [1.5 Using `getClass()`](#q-1-5)
     - [1.6 Read-write locks](#q-1-6)
     - [1.7 Task &laquo;Print array&raquo;](#q-1-7)
-    - [1.8 Task &laquo;Money transfer&raquo;](#q-1-8)
+    - [1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup>](#q-1-8)
     - [1.9 Task &laquo;Swap value&raquo;](#q-1-9)
   - [2. The keyword `volatile`](#q-2)
-    - [2.1 `volatile` atomicity](#q-2-1)
-    - [2.2 `volatile` visibility](#q-2-2)
+    - [2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup>](#q-2-1)
+    - [2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup>](#q-2-2)
     - [2.3 `volatile` object](#q-2-3)
   - [3. The class `java.lang.Thread` and synchronization primitives of the `Object` class](#q-3)
-    - [3.1 Starting a thread](#q-3-1)
-    - [3.2 Running a thread](#q-3-2)
+    - [3.1 Starting a thread <sup>&laquo;used&raquo;</sup>](#q-3-1)
+    - [3.2 Running a thread <sup>&laquo;used&raquo;</sup>](#q-3-2)
     - [3.3 Reusing a thread](#q-3-3)
-    - [3.4 Stopping a thread](#q-3-4)
+    - [3.4 Stopping a thread <sup>&laquo;used&raquo;</sup>](#q-3-4)
     - [3.5 Joining a thread](#q-3-5)
-    - [3.6 Interrupting a thread](#q-3-6)
-    - [3.7 Waiting to wake up](#q-3-7)
-    - [3.8 `Thread.sleep` vs `Object.wait`](#q-3-8)
-    - [3.9 `Object.notify` vs `Object.notifyAll` (missed Signals)](#q-3-9)
+    - [3.6 Notifying a thread](#q-3-6)
+    - [3.7 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-7)
+    - [3.8 `Object.notify` vs `Object.notifyAll` (missed signals) <sup>&laquo;used&raquo;</sup>](#q-3-8)
   - [4. The package `java.util.concurrent`](#q-4)
-    - [4.1 Executor Service `shutdown` vs `shutdownNow`](#q-4-1)
+    - [4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup>](#q-4-1)
   - [5. Safe publication](#q-5)
-    - [5.1 Immutable classes](#q-5-1)
-    - [5.2 Lazy loading](#q-5-2)
-    - [5.3 Double-checked locking](#q-5-3)
+    - [5.1 Immutable classes <sup>&laquo;used&raquo;</sup>](#q-5-1)
+    - [5.2 Lazy loading <sup>&laquo;used&raquo;</sup>](#q-5-2)
+    - [5.3 Double-checked locking <sup>&laquo;used&raquo;</sup>](#q-5-3)
 
 
 ## Motivation <a name="motivation"/>
@@ -66,7 +65,7 @@ there are two main footnotes:
 ## Questions <a name="questions"/>
 
 There are questions of varying difficulty here. The questions that I heard or used during interviews
-are marked as `a question <sup>&laquo;approved&raquo;</sup>`. The answers follow the questions,
+are marked as `a question <sup>&laquo;used&raquo;</sup>`. The answers follow the questions,
 but they are hidden to avoid spoilers.
 
 There are 5 main topics that contain a number of questions:
@@ -356,7 +355,7 @@ class RearrangeableArray<Integer> {
 
 </details>
 
-#### 1.8 Task &laquo;Money transfer&raquo; <a name="q-1-8"/>
+#### 1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup> <a name="q-1-8"/>
 
 Q: *What problem might occur in the following code? How to fix it?*
 
@@ -582,7 +581,7 @@ class Cell {
 
 ### 2. The keyword `volatile` <a name="q-2"/>
 
-#### 2.1 `volatile` atomicity <a name="q-2-1"/>
+#### 2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup> <a name="q-2-1"/>
 
 Q: **Is the `Counter` class thread-safe?
 
@@ -633,7 +632,7 @@ can only guarantee visibility, not atomicity.*
 
 </details>
 
-#### 2.2 `volatile` visibility <a name="q-2-2"/>
+#### 2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup> <a name="q-2-2"/>
 
 Q: *What can `T2` print in "Example 1"? Will anything change if `b` becomes 
 a `volatile` variable as in the "Example 2"?*
@@ -767,7 +766,7 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 ### 3. The class `java.lang.Thread` and synchronization primitives of the `Object` class <a name="q-3"/>
 
-#### 3.1 Starting a thread <a name="q-3-1"/>
+#### 3.1 Starting a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-1"/>
 
 Q: *How to start a new thread?*
 
@@ -778,7 +777,7 @@ A: *Create an instance of `Thread` class and call the `start` method.*
 
 </details>
 
-#### 3.2 Running a thread <a name="q-3-2"/>
+#### 3.2 Running a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-2"/>
 
 Q: *How many times “Hello!” will it be printed?*
 
@@ -831,7 +830,7 @@ A: *"Hello!" will be printed once and an exception will be thrown because a thre
 
 </details>
 
-#### 3.4 Stopping a thread <a name="q-3-4"/>
+#### 3.4 Stopping a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-4"/>
 
 Q: *How to stop a thread?*
 
@@ -897,11 +896,7 @@ after `Thread.join`,regardless of whether the `calculated` field is `volatile` o
 
 </details>
 
-#### 3.6 Interrupting a thread <a name="q-3-6"/>
-
-Q: *?*
-
-#### 3.7 Waiting to wake up <a name="q-3-7"/>
+#### 3.6 Notifying a thread <a name="q-3-6"/>
 
 Q: *What will be printed?*
 
@@ -972,7 +967,7 @@ class Example {
 
 </details>
 
-#### 3.8 `Thread.sleep` vs `Object.wait` <a name="q-3-8"/>
+#### 3.7 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup> <a name="q-3-7"/>
 
 Q: *What's the difference between `Thread.sleep` and `Object.wait`?*
 
@@ -1007,7 +1002,7 @@ From javadoc:
 
 </details>
 
-#### 3.9 `Object.notify` vs `Object.notifyAll` (missed signals) <a name="q-3-9"/>
+#### 3.8 `Object.notify` vs `Object.notifyAll` (missed signals) <sup>&laquo;used&raquo;</sup> <a name="q-3-8"/>
 
 Q: *What's the difference between `Object.notify` and `Object.motifyAll`? 
 Are there any risks when using `Object.notify`?*
@@ -1084,7 +1079,7 @@ Are there any risks when using `Object.notify`?*
 
 ### 4. The package `java.util.concurrent` <a name="q-4"/>
 
-#### 4.1 Executor Service `shutdown` vs `shutdownNow` <a name="q-4-1"/>
+#### 4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup> <a name="q-4-1"/>
 
 Q: *What is the difference between `ExecutorService.shutdown` and `ExecutorService.shutdownNow`?*
 
@@ -1111,7 +1106,7 @@ From javadoc:
 
 ### 5. Safe publication <a name="q-5"/>
 
-#### 5.1 Immutable classes <a name="q-5-1"/>
+#### 5.1 Immutable classes <sup>&laquo;used&raquo;</sup> <a name="q-5-1"/>
 
 Q1: *Does the `ElectricVehicle` class is immutable?
 What are the advantages of immutable objects in concurrent environment?*
@@ -1169,7 +1164,7 @@ Immutable objects are thread-safe and can be used by multiple threads.*
 
 </details>
 
-#### 5.2 Lazy loading <a name="q-5-2"/>
+#### 5.2 Lazy loading <sup>&laquo;used&raquo;</sup> <a name="q-5-2"/>
 
 Q: *How to make the following lazy-load class thread-safe? The class is too large to preload.*
 
@@ -1257,7 +1252,7 @@ The above code is from [JCP].
 
 </details>
 
-#### 5.3 Double-checked locking <a name="q-5-3"/>
+#### 5.3 Double-checked locking <sup>&laquo;used&raquo;</sup> <a name="q-5-3"/>
 
 Q: *Is the following class tread-safe?*
 
