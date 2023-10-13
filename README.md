@@ -36,9 +36,9 @@ This is not a complete collection. I hope new interesting ideas for questions wi
     - [3.10 Options of `Object.notifyAll`]
     - [3.11 Spurious wakeups]
   - [4. The package `java.util.concurrent`](#q-4)
-    - [4.1 Thread Pool `shutdown` vs `shutdownNow`]
+    - [4.1 Executor Service `shutdown` vs `shutdownNow`](#q-4-1)
   - [5. Safe publication](#q-5)
-    - [5.1 Immutable classes](#q-5-1) // TODO
+    - [5.1 Immutable classes](#q-5-1)
     - [5.2 Lazy loading](#q-5-2)
     - [5.3 Double-checked locking](#q-5-3)
 
@@ -364,6 +364,7 @@ class RearrangeableArray<Integer> {
 Q: *What problem might occur in the following code? How to fix it?*
 
 ```java
+@NotTreadSafe
 class Account {
     private BigDecimal balance;
 
@@ -423,6 +424,7 @@ A: *The above code is deadlock-prone. The solution is to avoid locking on method
 *For example using `ReentranLock`:*
 
 ```java
+@NotTreadSafe
 class Account {
     public final ReentrantLock lock = new ReentrantLock();
     
@@ -445,6 +447,7 @@ class Account {
     }
 }
 
+@TreadSafe
 class Accountant {
     public void transferMoney(Account fromAccount, Account toAccount, BigDecimal amount) {
         if (fromAccount == toAccount) { // alias check
@@ -480,6 +483,7 @@ class Accountant {
 Q: *What problem might occur in the following code? How to fix it?*
 
 ```java
+@TreadSafe
 class Cell {
     private long value;
     
@@ -523,6 +527,7 @@ A: *The above code is deadlock-prone. The solution is to avoid locking on method
 *For example using `ReentranLock` and changing the method to return a `boolean` value:*
 
 ```java
+@TreadSafe
 class Cell {
     private final ReentrantLock lock = new ReentrantLock();
     
@@ -767,15 +772,92 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 ### 4. The package `java.util.concurrent` <a name="q-4"/>
 
+#### 4.1 Executor Service `shutdown` vs `shutdownNow` <a name="q-4-1"/>
+
+Q: *What is the difference between `ExecutorService.shutdown` and `ExecutorService.shutdownNow`?*
+
+<details>
+    <summary>The Answer</summary>
+
+From javadoc:
+
+> The `shutdown()` method will allow previously submitted tasks to execute before terminating, 
+> while the `shutdownNow()` method prevents waiting tasks from starting 
+> and attempts to stop currently executing tasks. 
+> Upon termination, an executor has no tasks actively executing, 
+> no tasks awaiting execution, and no new tasks can be submitted.
+
+[JCP]:
+
+> The `shutdown` method initiates a graceful shutdown: no new tasks are accepted
+> but previously submitted tasks are allowed to complete—including those that
+> have not yet begun execution. The `shutdownNow` method initiates an abrupt shutdown: 
+> it attempts to cancel outstanding tasks and does not start any tasks that
+> are queued but not begun.
+
+</details>
+
 ### 5. Safe publication <a name="q-5"/>
 
 #### 5.1 Immutable classes <a name="q-5-1"/>
 
-Q: **
+Q1: *Does the `ElectricVehicle` class is immutable?
+What are the advantages of immutable objects in concurrent environment?*
 
-TODO
+```java
+class Battery {
+    private int power;
+    private int capacity;
+    
+    public Battery(int initialPower, int initialCapacity) {
+        this.power = calculatePower(initialPower);
+        this.capacity = calculateCapacity(initialCapacity);
+    }
+    
+    // getters & setters
+}
 
-#### 5.2 Lazy loading <a name="q-5-1"/>
+class ElectricVehicle {
+    private final String name;
+    private final Battery battery;
+    
+    public Vehicle(String name, Battery battery) {
+        this.name = name;
+        this.battery = battery;
+    }
+    
+    // getters
+}
+```
+
+<details>
+    <summary>The Answer</summary>
+
+A: *The `ElectricVehicle` class isn't thread-safe because it contains the not tread-safe `Battery` class.
+Immutable objects are thread-safe and can be used by multiple threads.*
+
+[JCP]:
+
+> An immutable object is one whose state cannot be changed after construction.
+> Immutable objects are inherently thread-safe; their invariants are established by
+> the constructor, and if their state cannot be changed, these invariants always hold.
+> - Immutable objects are always thread-safe.
+
+[JCP]:
+
+> An object is immutable if:
+> - Its state cannot be modified after construction;
+> - All its fields are `final`;
+> - It is *properly constructed* (the `this` reference does not escape during construction).
+
+[JCP]: 
+
+> *Immutable* objects can be used safely by any thread without additional
+> synchronization, even when synchronization is not used to publish them
+
+</details>
+
+#### 5.2 Lazy loading <a name="q-5-2"/>
 
 Q: *How to make the following lazy-load class thread-safe? The class is too large to preload.*
 
