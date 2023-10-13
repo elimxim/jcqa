@@ -31,7 +31,7 @@ This is a collection of questions that I heard during an interviews or found whi
     - [3.6 Interrupting a thread](#q-3-6)
     - [3.7 Waiting to wake up](#q-3-7)
     - [3.8 `Thread.sleep` vs `Object.wait`](#q-3-8)
-    - [3.9 `Object.notify` vs `Object.notifyAll`. Missed Signals](#q-3-9)
+    - [3.9 `Object.notify` vs `Object.notifyAll` (missed Signals)](#q-3-9)
   - [4. The package `java.util.concurrent`](#q-4)
     - [4.1 Executor Service `shutdown` vs `shutdownNow`](#q-4-1)
   - [5. Safe publication](#q-5)
