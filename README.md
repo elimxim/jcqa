@@ -1,7 +1,6 @@
 # Java Concurrency Interview Questions
 
-This is a collection of questions that, in my opinion, are the most interesting to ask during an interview.
-This is not a complete collection. I hope new interesting ideas for questions will be added in the future.
+This is a collection of questions that I heard during an interviews or found while reading.
 
 ---
 
