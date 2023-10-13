@@ -767,7 +767,7 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 ### 3. The class `java.lang.Thread` and synchronization primitives of the `Object` class <a name="q-3"/>
 
-#### 3.1 Starting a thread <a name="q-3-1/>
+#### 3.1 Starting a thread <a name="q-3-1"/>
 
 Q: *How to start a new thread?*
 
@@ -778,7 +778,7 @@ A: *Create an instance of `Thread` class and call the `start` method.*
 
 </details>
 
-#### 3.2 Running a thread <a name="q-3-2/>
+#### 3.2 Running a thread <a name="q-3-2"/>
 
 Q: *How many times “Hello!” will it be printed?*
 
@@ -804,7 +804,7 @@ A: *"Hello" will be printed infinitely until the program is stopped because `Thr
 
 </details>>
 
-#### 3.3 Reusing a thread <a name="q-3-3/>
+#### 3.3 Reusing a thread <a name="q-3-3"/>
 
 Q: *How many times “Hello!” will it be printed?*
 
@@ -831,7 +831,7 @@ A: *"Hello!" will be printed once and an exception will be thrown because a thre
 
 </details>
 
-#### 3.4 Stopping a thread <a name="q-3-4/>
+#### 3.4 Stopping a thread <a name="q-3-4"/>
 
 Q: *How to stop a thread?*
 
@@ -849,7 +849,7 @@ interruption mechanism can be used.*
 
 </details>
 
-#### 3.5 Joining a thread <a name="q-3-5/>
+#### 3.5 Joining a thread <a name="q-3-5"/>
 
 Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
 
@@ -897,11 +897,11 @@ after `Thread.join`,regardless of whether the `calculated` field is `volatile` o
 
 </details>
 
-#### 3.6 Interrupting a thread <a name="q-3-6/>
+#### 3.6 Interrupting a thread <a name="q-3-6"/>
 
 Q: *?*
 
-#### 3.7 Waiting to wake up <a name="q-3-7/>
+#### 3.7 Waiting to wake up <a name="q-3-7"/>
 
 Q: *What will be printed?*
 
@@ -972,7 +972,7 @@ class Example {
 
 </details>
 
-#### 3.8 `Thread.sleep` vs `Object.wait` <a name="q-3-8/>
+#### 3.8 `Thread.sleep` vs `Object.wait` <a name="q-3-8"/>
 
 Q: *What's the difference between `Thread.sleep` and `Object.wait`?*
 
@@ -1007,7 +1007,7 @@ From javadoc:
 
 </details>
 
-#### 3.9 `Object.notify` vs `Object.notifyAll` (missed signals) <a name="q-3-9/>
+#### 3.9 `Object.notify` vs `Object.notifyAll` (missed signals) <a name="q-3-9"/>
 
 Q: *What's the difference between `Object.notify` and `Object.motifyAll`? 
 Are there any risks when using `Object.notify`?*
