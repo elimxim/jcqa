@@ -65,7 +65,7 @@ there are two main footnotes:
 ## Questions <a name="questions"/>
 
 There are questions of varying difficulty here. The questions that I heard or used during interviews
-are marked as `a question <sup>&laquo;used&raquo;</sup>`. The answers follow the questions,
+are marked as: "a question" <sup>&laquo;used&raquo;</sup>. The answers follow the questions,
 but they are hidden to avoid spoilers.
 
 There are 5 main topics that contain a number of questions:
