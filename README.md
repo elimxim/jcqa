@@ -73,7 +73,7 @@ There are 5 main topics that contain a number of questions:
 - the keyword `synchornized`
 - the keyword `volatile`
 - the class `java.lang.Thread`
-- the package `java.util.concurrent`
+- the class `java.lang.Thread` and synchronization primitives of the `Object` class
 - safe publication
 
 ### 1. The keyword `synchronized` <a name="q-1"/>
