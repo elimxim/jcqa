@@ -771,7 +771,7 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 Q: *How to start a new thread?*
 
 <details>
-    <summary>The Answers</summary>
+    <summary>The Answer</summary>
 
 A: *Create an instance of `Thread` class and call the `start` method.*
 
