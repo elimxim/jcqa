@@ -855,7 +855,7 @@ Q: *What might the following code print? What can be printed if the `condition` 
 
 ```java
 class Example {
-    private boolean condition;
+    private static boolean condition;
     
     public static void main(String[] args) throws InterruptedException {
         Thread t1 = new Thread(() -> {
@@ -899,9 +899,11 @@ Q: *What might the following code print? What can be printed if the `calculated`
 
 ```java
 class Universe {
-    private boolean calculated;
+    private static boolean calculated;
     
     public static void main(String[] args) throws InterruptedException {
+        // ...
+        
         Thread deepThought = new Thread(() -> {
             calculateInSevenAndHalfMillionYears(); // really long calculation
             calculated = true;
@@ -943,28 +945,26 @@ Q: *What might the following code print?*
 
 ```java
 class Example {
-    public final Object Earth = new Object();
-    private volatile boolean calculated;
+    private static final Object monitor = new Object();
+    private static volatile boolean calculated;
     
     public static void main(String[] args) {
         Thread t1 = new Thread(() -> {
-            synchronized (Earth) {
-                Earth.wait();
+            synchronized (monitor) {
+                try {
+                    monitor.wait();
+                } catch (InterruptedException ignored) { }
             }
-            
-            if (calculated) {
-                System.out.println("true");
-            } else {
-                System.out.println("false");
-            }
+
+            System.out.println(calculated);
         });
 
         t1.start();
         
         Thread t2 = new Thread(() -> {
-            calculated = longCalculation();
-            synchronized (Earth) {
-                Earth.notifyAll();
+            calculated = longCalculation(); // returns "true"
+            synchronized (monitor) {
+                monitor.notifyAll();
             }
         });
 
@@ -980,14 +980,18 @@ A: *It is possible to print "false" because the waiting thread may wake up spuri
 
 ```java
 class Example {
-    final Object monitor = new Object();
-    volatile boolean calculated;
+    private static final Object monitor = new Object();
+    private static volatile boolean calculated;
     
     public static void main(String[] args) {
         Thread t1 = new Thread(() -> {
             synchronized (monitor) {
                 while (!calculated) {
-                    monitor.wait();
+                    try {
+                        monitor.wait();
+                    } catch (InterruptedException e) {
+                        break;
+                    }
                 }
             }
         });
@@ -995,7 +999,7 @@ class Example {
         t1.start();
         
         Thread t2 = new Thread(() -> {
-            calculated = longCalculation();
+            calculated = longCalculation(); // returns "true"
             synchronized (monitor) {
                 monitor.notifyAll();
             }
@@ -1035,14 +1039,20 @@ Q: *Don't PANIC? What might the following code print?*
 
 ```java
 class Universe {
-    final Object monitor = new Object();
-    volatile boolean calculated;
+    public static final Object Earth = new Object();
+    private static volatile boolean calculated;
     
     public static void main(String[] args) {
+        // ...
+        
         Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
             System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
-            synchronized (monitor) {
-                monitor.wait();
+            synchronized (Earth) {
+                try {
+                    Earth.wait();
+                } catch (InterruptedException Vogons) {
+                    throw new RuntimeException("Unpleasant event!");
+                }
             }
             
             if (calculated) {
@@ -1055,13 +1065,15 @@ class Universe {
         hyperIntelligentPanDimensionalBeings.start();
         
         Thread theFirstGreatestComputerEver = new Thread(() -> {
-            calculated = reallyLongCalculation();
-            synchronized (monitor) {
-                monitor.notifyAll();
+            calculated = reallyLongCalculation(); // will return "true"
+            synchronized (Earth) {
+                Earth.notifyAll();
             }
         });
 
         theFirstGreatestComputerEver.start();
+        
+        // ...
     }
 }
 ```
@@ -1073,15 +1085,21 @@ A: *It is possible to print "PANIC!!!" because the waiting thread may wake up sp
 
 ```java
 class Universe {
-    final Object monitor = new Object();
-    volatile boolean calculated;
+    public static final Object Earth = new Object();
+    private static volatile boolean calculated;
     
     public static void main(String[] args) {
+        // ...
+        
         Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
             System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
-            synchronized (monitor) {
+            synchronized (Earth) {
                 while(!calculated) {
-                    monitor.wait();
+                    try {
+                        Earth.wait();
+                    } catch (InterruptedException Vogons) {
+                        throw new RuntimeException("Unpleasant event!");
+                    }
                 }
             }
             System.out.println("Celebrating!");
@@ -1090,13 +1108,15 @@ class Universe {
         hyperIntelligentPanDimensionalBeings.start();
         
         Thread theFirstGreatestComputerEver = new Thread(() -> {
-            calculated = reallyLongCalculation();
-            synchronized (monitor) {
-                monitor.notifyAll();
+            calculated = reallyLongCalculation(); // will return "true"
+            synchronized (Earth) {
+                Earth.notifyAll();
             }
         });
 
         theFirstGreatestComputerEver.start();
+        
+        // ...
     }
 }
 ```
