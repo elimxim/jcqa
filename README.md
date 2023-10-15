@@ -28,7 +28,7 @@ This is a collection of questions that I heard during an interviews or found whi
     - [3.3 Reusing a thread](#q-3-3)
     - [3.4 Stopping a thread <sup>&laquo;used&raquo;</sup>](#q-3-4)
     - [3.5 Joining a thread](#q-3-5)
-    - [3.6 Waiting thread](#q-3-6)
+    - [3.6 Waiting a thread](#q-3-6)
     - [3.7 Notifying a thread](#q-3-7)
     - [3.8 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-8`)
     - [3.9 `Object.notify` vs `Object.notifyAll` <sup>&laquo;used&raquo;</sup>](#q-3-9)
