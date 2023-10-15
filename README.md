@@ -4,7 +4,7 @@ This is a collection of questions that I heard during an interviews or found whi
 
 ---
 
-**Table of content**
+**Table of content** <a name="toc"/>
 
 - [Motivation](#motivation)
 - [Questions](#questions)
@@ -79,7 +79,7 @@ There are 5 main topics that contain a number of questions:
 
 ### 1. The keyword `synchronized` <a name="q-1"/>
 
-#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"/>
+#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"/> [&#8593;](#toc)
 
 Q: *What happens if the synchronized `pressEngineButton` method calls the `startEngine` method which is also synchronized?*
 
@@ -892,8 +892,6 @@ after `Thread.join`,regardless of whether the `condition` field is `volatile` or
 
 </details>
 
-<br/>
-
 <details>
     <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
 
@@ -1205,8 +1203,6 @@ class Example {
 > which spurious wakeups are permitted and are known to occur.
 
 </details>
-
-<br/>
 
 <details>
     <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
