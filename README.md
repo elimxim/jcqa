@@ -66,7 +66,7 @@ there are two main footnotes:
 ## Questions <a name="questions"/>
 
 There are questions of varying difficulty here. The questions that I heard or used during interviews
-are marked as `a question <sup>&laquo;used&raquo;</sup>`. The answers follow the questions,
+are marked as: "a question" <sup>&laquo;used&raquo;</sup>. The answers follow the questions,
 but they are hidden to avoid spoilers.
 
 There are 5 main topics that contain a number of questions:
@@ -74,7 +74,7 @@ There are 5 main topics that contain a number of questions:
 - the keyword `synchornized`
 - the keyword `volatile`
 - the class `java.lang.Thread`
-- the package `java.util.concurrent`
+- the class `java.lang.Thread` and synchronization primitives of the `Object` class
 - safe publication
 
 ### 1. The keyword `synchronized` <a name="q-1"/>
@@ -772,7 +772,7 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 Q: *How to start a new thread?*
 
 <details>
-    <summary>The Answers</summary>
+    <summary>The Answer</summary>
 
 A: *Create an instance of `Thread` class and call the `start` method.*
 
