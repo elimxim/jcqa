@@ -898,7 +898,7 @@ after `Thread.join`,regardless of whether the `condition` field is `volatile` or
 Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
 
 ```java
-class Universe {
+class MilkyWay {
     private static boolean calculated;
     
     public static void main(String[] args) throws InterruptedException {
@@ -1038,7 +1038,7 @@ class Example {
 Q: *Don't PANIC? What might the following code print?*
 
 ```java
-class Universe {
+class MilkyWay {
     public static final Object Earth = new Object();
     private static volatile boolean calculated;
     
@@ -1084,7 +1084,7 @@ class Universe {
 A: *It is possible to print "PANIC!!!" because the waiting thread may wake up spuriously.*
 
 ```java
-class Universe {
+class MilkyWay {
     public static final Object Earth = new Object();
     private static volatile boolean calculated;
     
