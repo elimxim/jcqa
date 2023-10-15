@@ -79,7 +79,7 @@ There are 5 main topics that contain a number of questions:
 
 ### 1. The keyword `synchronized` <a name="q-1"/>
 
-#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"/> [&#8593;](#toc)
+#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"/> [&#11016;](#toc)
 
 Q: *What happens if the synchronized `pressEngineButton` method calls the `startEngine` method which is also synchronized?*
 
