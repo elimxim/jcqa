@@ -898,7 +898,7 @@ after `Thread.join`,regardless of whether the `condition` field is `volatile` or
 Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
 
 ```java
-class MilkyWay {
+class Somewhere {
     private static boolean calculated;
     
     public static void main(String[] args) throws InterruptedException {
