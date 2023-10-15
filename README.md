@@ -943,8 +943,8 @@ Q: *What might the following code print?*
 
 ```java
 class Example {
-    final Object Earth = new Object();
-    volatile boolean calculated;
+    public final Object Earth = new Object();
+    private volatile boolean calculated;
     
     public static void main(String[] args) {
         Thread t1 = new Thread(() -> {
