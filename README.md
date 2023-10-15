@@ -28,10 +28,10 @@ This is a collection of questions that I heard during an interviews or found whi
     - [3.3 Reusing a thread](#q-3-3)
     - [3.4 Stopping a thread <sup>&laquo;used&raquo;</sup>](#q-3-4)
     - [3.5 Joining a thread](#q-3-5)
-    - [3.6 Notifying a thread](#q-3-6)
-    - [3.7 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-7)
-    - [3.8 `Object.notify` vs `Object.notifyAll` (missed signals) <sup>&laquo;used&raquo;</sup>](#q-3-8)
-    - [3.9 Waiting thread (spurious wakeups)](#q-3-9)
+    - [3.6 Waiting thread](#q-3-6)
+    - [3.7 Notifying a thread](#q-3-7)
+    - [3.8 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-8`)
+    - [3.9 `Object.notify` vs `Object.notifyAll` <sup>&laquo;used&raquo;</sup>](#q-3-9)
   - [4. The package `java.util.concurrent`](#q-4)
     - [4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup>](#q-4-1)
   - [5. Safe publication](#q-5)
@@ -123,7 +123,7 @@ in the example above would cause a deadlock when the `pressEngineButton` calls t
 
 </details>
 
-#### 1.2 Synchronized method overriding <a name="q-1-2"/>
+#### 1.2 Synchronized method overriding <a name="q-1-2"/> [&#11016;](#toc)
 
 Q: *What happens if the `move` method of the `Car` class is called by multiple threads at the same time?*
 
@@ -157,7 +157,7 @@ the `Car.move` method is not thread-safe.*
 
 </details>
 
-#### 1.3 Static fields synchronization <a name="q-1-3"/>
+#### 1.3 Static fields synchronization <a name="q-1-3"/> [&#11016;](#toc)
 
 Q: *Is the `CountHolder` class thread-safe?*
 
@@ -189,7 +189,7 @@ A: *The `CountHolder` class isn't thread-sage, because object locking doesn't pr
 
 </details>
 
-#### 1.4 Inner class lock <a name="q-1-4"/>
+#### 1.4 Inner class lock <a name="q-1-4"/> [&#11016;](#toc)
 
 Q: *Can an inner class use a lock of its outer class?*
 
@@ -208,7 +208,7 @@ a lock of its outer class with: `synchronized(OuterClass.this)`.*
 
 </details>
 
-#### 1.5 Using `getClass()` <a name="q-1-5"/>
+#### 1.5 Using `getClass()` <a name="q-1-5"/> [&#11016;](#toc)
 
 Q: *What is the danger of synchronization in the following code and is it wrong in the example below?*
 
@@ -253,7 +253,7 @@ because both `getClass()` expressions return corresponding `Class` instances.*
 
 </details>
 
-#### 1.6 Read-write locks <a name="q-1-6"/>
+#### 1.6 Read-write locks <a name="q-1-6"/> [&#11016;](#toc)
 
 Q: "Is the `Vehicle` class thread-safe?"
 
@@ -285,7 +285,7 @@ A: *The `Vehicle` class isn't thread-safe, because different locks are used to r
 
 </details>
 
-#### 1.7 Task &laquo;Print array&raquo; <a name="q-1-7"/>
+#### 1.7 Task &laquo;Print array&raquo; <a name="q-1-7"/> [&#11016;](#toc)
 
 Q: *The implementation of the `print` method isn't consistent: the method might print the same element 
 twice if another thread rearranges elements. How to fix this method?*
@@ -356,7 +356,7 @@ class RearrangeableArray<Integer> {
 
 </details>
 
-#### 1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup> <a name="q-1-8"/>
+#### 1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup> <a name="q-1-8"/> [&#11016;](#toc)
 
 Q: *What problem might occur in the following code? How to fix it?*
 
@@ -475,7 +475,7 @@ class Accountant {
 
 </details>
 
-#### 1.9 Task &laquo;Swap value&raquo; <a name="q-1-9"/>
+#### 1.9 Task &laquo;Swap value&raquo; <a name="q-1-9"/> [&#11016;](#toc)
 
 Q: *What problem might occur in the following code? How to fix it?*
 
@@ -582,7 +582,7 @@ class Cell {
 
 ### 2. The keyword `volatile` <a name="q-2"/>
 
-#### 2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup> <a name="q-2-1"/>
+#### 2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup> <a name="q-2-1"/> [&#11016;](#toc)
 
 Q: **Is the `Counter` class thread-safe?
 
@@ -633,7 +633,7 @@ can only guarantee visibility, not atomicity.*
 
 </details>
 
-#### 2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup> <a name="q-2-2"/>
+#### 2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup> <a name="q-2-2"/> [&#11016;](#toc)
 
 Q: *What can `T2` print in "Example 1"? Will anything change if `b` becomes 
 a `volatile` variable as in the "Example 2"?*
@@ -740,7 +740,7 @@ or will be able to see all the changes. In "Example 2" only one option is availa
 
 </details>
 
-#### 2.3 `volatile` object <a name="q-2-3"/>
+#### 2.3 `volatile` object <a name="q-2-3"/> [&#11016;](#toc)
 
 Q: *Is the `Vehicle` class thread-safe?*
 
@@ -767,7 +767,7 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 ### 3. The class `java.lang.Thread` and synchronization primitives of the `Object` class <a name="q-3"/>
 
-#### 3.1 Starting a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-1"/>
+#### 3.1 Starting a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-1"/> [&#11016;](#toc)
 
 Q: *How to start a new thread?*
 
@@ -778,7 +778,7 @@ A: *Create an instance of `Thread` class and call the `start` method.*
 
 </details>
 
-#### 3.2 Running a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-2"/>
+#### 3.2 Running a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-2"/> [&#11016;](#toc)
 
 Q: *How many times “Hello!” will it be printed?*
 
@@ -804,7 +804,7 @@ A: *"Hello" will be printed infinitely until the program is stopped because `Thr
 
 </details>>
 
-#### 3.3 Reusing a thread <a name="q-3-3"/>
+#### 3.3 Reusing a thread <a name="q-3-3"/> [&#11016;](#toc)
 
 Q: *How many times “Hello!” will it be printed?*
 
@@ -831,7 +831,7 @@ A: *"Hello!" will be printed once and an exception will be thrown because a thre
 
 </details>
 
-#### 3.4 Stopping a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-4"/>
+#### 3.4 Stopping a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-4"/> [&#11016;](#toc)
 
 Q: *How to stop a thread?*
 
@@ -849,7 +849,7 @@ interruption mechanism can be used.*
 
 </details>
 
-#### 3.5 Joining a thread <a name="q-3-5"/>
+#### 3.5 Joining a thread <a name="q-3-5"/> [&#11016;](#toc)
 
 Q: *What might the following code print? What can be printed if the `condition` field is `volatile`?*
 
@@ -927,193 +927,17 @@ class Universe {
 }
 ```
 
+<details>
+    <summary>The Answer</summary>
+
 A: *Only "42" will be printed because any actions in a thread happens-before any other actions
 after `Thread.join`,regardless of whether the `calculated` field is `volatile` or not.*
 
 </details>
 
-#### 3.6 Notifying a thread <a name="q-3-6"/>
-
-Q: *What will be printed?*
-
-```java
-class Example {
-    private final Object monitor = new Object();
-    
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Tread(() -> {
-            System.out.println("Step 1");
-            try {
-                monitor.wait();
-                System.out.println("Step 2");
-            } catch (InterruptedException ignore) { }
-        });
-        
-        Thread t2 = new Thread(() -> {
-            monitor.notifyAll();
-            System.out.println("Step 3");
-        });
-        
-        t1.start();
-        
-        Thread.sleep(1000);
-        
-        t2.start();
-    }
-}
-```
-
-<details>
-    <summary>The Answer</summary>
-
-A: *"Step 1" will be printed and an exception will be thrown after it, 
-because in order to call the `wait()` and `notifyAll()` methods on an object, 
-a lock on that object must be acquired.*
-
-```java
-class Example {
-    private final Object monitor = new Object();
-    
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Tread(() -> {
-            System.out.println("Step 1");
-            try {
-                synchronized(monitor) {
-                    monitor.wait();
-                }
-                System.out.println("Step 2");
-            } catch (InterruptedException ignore) { }
-        });
-        
-        Thread t2 = new Thread(() -> {
-            synchronized (monitor) {
-                monitor.notifyAll();
-                System.out.println("Step 3");
-            }
-        });
-        
-        t1.start();
-        
-        Thread.sleep(1000);
-        
-        t2.start();
-    }
-}
-```
-
 </details>
 
-#### 3.7 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup> <a name="q-3-7"/>
-
-Q: *What's the difference between `Thread.sleep` and `Object.wait`?*
-
-<details>
-    <summary>The Answer</summary>
-
-From javadoc:
-
-> Causes the currently executing thread to sleep (temporarily cease execution) 
-> for the specified number of milliseconds, subject to the precision and accuracy of system 
-> timers and schedulers. The thread does not lose ownership of any monitors.
-
-[JCP]:
-
-> Object.wait atomically releases the lock and asks the OS to suspend the current thread, 
-> allowing other threads to acquire the lock and therefore modify the object state. 
-> Upon waking, it reacquires the lock before returning. Intuitively, calling wait means 
-> “I want to go to sleep, but wake me when something interesting happens”, and calling the 
-> notification methods means “something interesting happened”.
-
-[CPJ]:
-
-> **Wait**. A `wait` invocation results in the following actions:
-> - If the current thread has been interrupted, then the method exits immediately, throwing an
-> `InterruptedException`. Otherwise, the current thread is blocked.
-> - The JVM places the thread in the internal and otherwise inaccessible wait set associated with
-> the target object.
-> - The synchronization lock for the target object is released, but all other locks held by the
-> thread are retained. A full release is obtained even if the lock is re-entrantly held due to nested
-> synchronized calls on the target object. Upon later resumption, the lock status is fully
-> restored.
-
-</details>
-
-#### 3.8 `Object.notify` vs `Object.notifyAll` (missed signals) <sup>&laquo;used&raquo;</sup> <a name="q-3-8"/>
-
-Q: *What's the difference between `Object.notify` and `Object.motifyAll`? 
-Are there any risks when using `Object.notify`?*
-
-<details>
-    <summary>The Answer</summary>
-
-[JCP]:
-
-> There are two notification methods in the condition queue API - `notify` and
-> `notifyAll`. To call either, you must hold the lock associated with the condition
-> queue object. Calling `notify` causes the JVM to select one thread waiting on that
-> condition queue to wake up; calling `notifyAll` wakes up all the threads waiting
-> on that condition queue. Because you must hold the lock on the condition queue
-> object when calling notify or `notifyAll`, and waiting threads cannot return from
-> wait without reacquiring the lock, the notifying thread should release the lock
-> quickly to ensure that the waiting threads are unblocked as soon as possible.
-> 
-> Because multiple threads could be waiting on the same condition queue for
-> different condition predicates, using `notify` instead of `notifyAll` can be dangerous, 
-> primarily because single notification is prone to a problem akin to missed signals.
- 
-[JCP]:
-
-> A missed signal occurs when a thread must wait for a specific condition that is already true, 
-> but fails to check the condition predicate before waiting. Now the thread is waiting to be notified of an event
-> that has already occurred. This is like starting the toast, going out to get the newspaper, 
-> having the bell go off while you are outside, and then sitting down at the
-> kitchen table waiting for the toast bell. You could wait a long time - potentially
-> forever. Unlike the marmalade for your toast, notification is not “sticky” - if
-> thread A notifies on a condition queue and thread B subsequently waits on that
-> same condition queue, B does not immediately wake up - another notification
-> is required to wake B. Missed signals are the result of coding errors like those
-> warned against in the list above, such as failing to test the condition predicate
-> before calling wait.
-
-[CPJ]:
-
-> **Notify**. A `notify` invocation results in the following actions:
-> - If one exists, an arbitrarily chosen thread, say *T*, is removed by the JVM from the internal
-> wait set associated with the target object. There is no guarantee about which waiting thread
-> will be selected when the wait set contains more than one thread.
-> - *T* must re-obtain the synchronization lock for the target object, which will *always* cause it to
-> block at least until the thread calling `notify` releases the lock. It will continue to block if
-> some other thread obtains the lock first.
-> - *T* is then resumed from the point of its `wait`.
-> 
-> **NotifyAll**. A `notifyAll` works in the same way as `notify` except that the steps occur (in effect,
-> simultaneously) for *all* threads in the wait set for the object. However, because they must acquire the
-> lock, threads continue one at a time.
-
-[CPJ]:
-
-> Additionally, a liveness failure could result if `setCount` were written in 
-> a non-atomic fashion, in particular as:
-> ```java
-> void badSetCount(long newValue) { // Do not use
->     synchronized(this) { notifyAll(); }
->     // (**)
->     synchronized(this) { count = newValue; }
-> }
-> ```
-> Here, the method first acquires the lock to perform `notifyAll`, then releases it, 
-> and then reacquires it to change `count`. This could result in a *missed signal*: 
-> A thread executing at point `(**)` might start waiting *after* the signal intended 
-> to wake it up was issued but before the condition was changed. This thread will 
-> wait forever, or at least until the next notification is somehow produced.
-> 
-> Note that within `synchronized` methods, the order in which a `notifyAll` is placed does not 
-> matter. No awakened threads will be able to continue until the synchronization lock is released. 
-> Just as a matter of style, most people put notifications last in method bodies.
-
-</details>
-
-#### 3.9 Waiting thread (spurious wakeups) <a name="q-3-9"/>
+#### 3.6 Waiting a thread <a name="q-3-6"/> [&#11016;](#toc)
 
 Q: *What might the following code print?*
 
@@ -1189,7 +1013,7 @@ class Example {
 > having your toaster and coffee maker share a single bell; when it rings, you still
 > have to look to see which device raised the signal.)<sup>7<sup/> Additionally, wait is even
 > allowed to return “spuriously”—not in response to any thread calling notify.<sup>8</sup>
-> 
+>
 > <sub> 7. This situation actually describes Tim’s kitchen pretty well; so many devices beep that when you
 > hear one, you have to inspect the toaster, the microwave, the coffee maker, and several others to
 > determine the cause of the signal.</sub>
@@ -1281,9 +1105,190 @@ class Universe {
 
 </details>
 
+#### 3.7 Notifying a thread <a name="q-3-7"/> [&#11016;](#toc)
+
+Q: *What will be printed?*
+
+```java
+class Example {
+    private final Object monitor = new Object();
+    
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Tread(() -> {
+            System.out.println("Step 1");
+            try {
+                monitor.wait();
+                System.out.println("Step 2");
+            } catch (InterruptedException ignore) { }
+        });
+        
+        Thread t2 = new Thread(() -> {
+            monitor.notifyAll();
+            System.out.println("Step 3");
+        });
+        
+        t1.start();
+        
+        Thread.sleep(1000);
+        
+        t2.start();
+    }
+}
+```
+
+<details>
+    <summary>The Answer</summary>
+
+A: *"Step 1" will be printed and an exception will be thrown after it, 
+because in order to call the `wait()` and `notifyAll()` methods on an object, 
+a lock on that object must be acquired.*
+
+```java
+class Example {
+    private final Object monitor = new Object();
+    
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Tread(() -> {
+            System.out.println("Step 1");
+            try {
+                synchronized(monitor) {
+                    monitor.wait();
+                }
+                System.out.println("Step 2");
+            } catch (InterruptedException ignore) { }
+        });
+        
+        Thread t2 = new Thread(() -> {
+            synchronized (monitor) {
+                monitor.notifyAll();
+                System.out.println("Step 3");
+            }
+        });
+        
+        t1.start();
+        
+        Thread.sleep(1000);
+        
+        t2.start();
+    }
+}
+```
+
+</details>
+
+#### 3.8 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup> <a name="q-3-8"/> [&#11016;](#toc)
+
+Q: *What's the difference between `Thread.sleep` and `Object.wait`?*
+
+<details>
+    <summary>The Answer</summary>
+
+From javadoc:
+
+> Causes the currently executing thread to sleep (temporarily cease execution) 
+> for the specified number of milliseconds, subject to the precision and accuracy of system 
+> timers and schedulers. The thread does not lose ownership of any monitors.
+
+[JCP]:
+
+> Object.wait atomically releases the lock and asks the OS to suspend the current thread, 
+> allowing other threads to acquire the lock and therefore modify the object state. 
+> Upon waking, it reacquires the lock before returning. Intuitively, calling wait means 
+> “I want to go to sleep, but wake me when something interesting happens”, and calling the 
+> notification methods means “something interesting happened”.
+
+[CPJ]:
+
+> **Wait**. A `wait` invocation results in the following actions:
+> - If the current thread has been interrupted, then the method exits immediately, throwing an
+> `InterruptedException`. Otherwise, the current thread is blocked.
+> - The JVM places the thread in the internal and otherwise inaccessible wait set associated with
+> the target object.
+> - The synchronization lock for the target object is released, but all other locks held by the
+> thread are retained. A full release is obtained even if the lock is re-entrantly held due to nested
+> synchronized calls on the target object. Upon later resumption, the lock status is fully
+> restored.
+
+</details>
+
+#### 3.9 `Object.notify` vs `Object.notifyAll` <sup>&laquo;used&raquo;</sup> <a name="q-3-9"/> [&#11016;](#toc)
+
+Q: *What's the difference between `Object.notify` and `Object.motifyAll`? 
+Are there any risks when using `Object.notify`?*
+
+<details>
+    <summary>The Answer</summary>
+
+[JCP]:
+
+> There are two notification methods in the condition queue API - `notify` and
+> `notifyAll`. To call either, you must hold the lock associated with the condition
+> queue object. Calling `notify` causes the JVM to select one thread waiting on that
+> condition queue to wake up; calling `notifyAll` wakes up all the threads waiting
+> on that condition queue. Because you must hold the lock on the condition queue
+> object when calling notify or `notifyAll`, and waiting threads cannot return from
+> wait without reacquiring the lock, the notifying thread should release the lock
+> quickly to ensure that the waiting threads are unblocked as soon as possible.
+> 
+> Because multiple threads could be waiting on the same condition queue for
+> different condition predicates, using `notify` instead of `notifyAll` can be dangerous, 
+> primarily because single notification is prone to a problem akin to missed signals.
+ 
+[JCP]:
+
+> A missed signal occurs when a thread must wait for a specific condition that is already true, 
+> but fails to check the condition predicate before waiting. Now the thread is waiting to be notified of an event
+> that has already occurred. This is like starting the toast, going out to get the newspaper, 
+> having the bell go off while you are outside, and then sitting down at the
+> kitchen table waiting for the toast bell. You could wait a long time - potentially
+> forever. Unlike the marmalade for your toast, notification is not “sticky” - if
+> thread A notifies on a condition queue and thread B subsequently waits on that
+> same condition queue, B does not immediately wake up - another notification
+> is required to wake B. Missed signals are the result of coding errors like those
+> warned against in the list above, such as failing to test the condition predicate
+> before calling wait.
+
+[CPJ]:
+
+> **Notify**. A `notify` invocation results in the following actions:
+> - If one exists, an arbitrarily chosen thread, say *T*, is removed by the JVM from the internal
+> wait set associated with the target object. There is no guarantee about which waiting thread
+> will be selected when the wait set contains more than one thread.
+> - *T* must re-obtain the synchronization lock for the target object, which will *always* cause it to
+> block at least until the thread calling `notify` releases the lock. It will continue to block if
+> some other thread obtains the lock first.
+> - *T* is then resumed from the point of its `wait`.
+> 
+> **NotifyAll**. A `notifyAll` works in the same way as `notify` except that the steps occur (in effect,
+> simultaneously) for *all* threads in the wait set for the object. However, because they must acquire the
+> lock, threads continue one at a time.
+
+[CPJ]:
+
+> Additionally, a liveness failure could result if `setCount` were written in 
+> a non-atomic fashion, in particular as:
+> ```java
+> void badSetCount(long newValue) { // Do not use
+>     synchronized(this) { notifyAll(); }
+>     // (**)
+>     synchronized(this) { count = newValue; }
+> }
+> ```
+> Here, the method first acquires the lock to perform `notifyAll`, then releases it, 
+> and then reacquires it to change `count`. This could result in a *missed signal*: 
+> A thread executing at point `(**)` might start waiting *after* the signal intended 
+> to wake it up was issued but before the condition was changed. This thread will 
+> wait forever, or at least until the next notification is somehow produced.
+> 
+> Note that within `synchronized` methods, the order in which a `notifyAll` is placed does not 
+> matter. No awakened threads will be able to continue until the synchronization lock is released. 
+> Just as a matter of style, most people put notifications last in method bodies.
+
+</details>
+
 ### 4. The package `java.util.concurrent` <a name="q-4"/>
 
-#### 4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup> <a name="q-4-1"/>
+#### 4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup> <a name="q-4-1"/> [&#11016;](#toc)
 
 Q: *What is the difference between `ExecutorService.shutdown` and `ExecutorService.shutdownNow`?*
 
@@ -1310,7 +1315,7 @@ From javadoc:
 
 ### 5. Safe publication <a name="q-5"/>
 
-#### 5.1 Immutable classes <sup>&laquo;used&raquo;</sup> <a name="q-5-1"/>
+#### 5.1 Immutable classes <sup>&laquo;used&raquo;</sup> <a name="q-5-1"/> [&#11016;](#toc)
 
 Q1: *Does the `ElectricVehicle` class is immutable?
 What are the advantages of immutable objects in concurrent environment?*
@@ -1368,7 +1373,7 @@ Immutable objects are thread-safe and can be used by multiple threads.*
 
 </details>
 
-#### 5.2 Lazy loading <sup>&laquo;used&raquo;</sup> <a name="q-5-2"/>
+#### 5.2 Lazy loading <sup>&laquo;used&raquo;</sup> <a name="q-5-2"/> [&#11016;](#toc)
 
 Q: *How to make the following lazy-load class thread-safe? The class is too large to preload.*
 
@@ -1456,7 +1461,7 @@ The above code is from [JCP].
 
 </details>
 
-#### 5.3 Double-checked locking <sup>&laquo;used&raquo;</sup> <a name="q-5-3"/>
+#### 5.3 Double-checked locking <sup>&laquo;used&raquo;</sup> <a name="q-5-3"/> [&#11016;](#toc)
 
 Q: *Is the following class tread-safe?*
 
