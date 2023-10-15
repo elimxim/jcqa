@@ -943,13 +943,13 @@ Q: *What might the following code print?*
 
 ```java
 class Example {
-    final Object monitor = new Object();
+    final Object Earth = new Object();
     volatile boolean calculated;
     
     public static void main(String[] args) {
         Thread t1 = new Thread(() -> {
-            synchronized (monitor) {
-                monitor.wait();
+            synchronized (Earth) {
+                Earth.wait();
             }
             
             if (calculated) {
@@ -963,8 +963,8 @@ class Example {
         
         Thread t2 = new Thread(() -> {
             calculated = longCalculation();
-            synchronized (monitor) {
-                monitor.notifyAll();
+            synchronized (Earth) {
+                Earth.notifyAll();
             }
         });
 
