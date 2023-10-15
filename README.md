@@ -31,6 +31,7 @@ This is a collection of questions that I heard during an interviews or found whi
     - [3.6 Notifying a thread](#q-3-6)
     - [3.7 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-7)
     - [3.8 `Object.notify` vs `Object.notifyAll` (missed signals) <sup>&laquo;used&raquo;</sup>](#q-3-8)
+    - [3.9 Waiting thread (spurious wakeups)](#q-3-9)
   - [4. The package `java.util.concurrent`](#q-4)
     - [4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup>](#q-4-1)
   - [5. Safe publication](#q-5)
@@ -850,29 +851,24 @@ interruption mechanism can be used.*
 
 #### 3.5 Joining a thread <a name="q-3-5"/>
 
-Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
+Q: *What might the following code print? What can be printed if the `condition` field is `volatile`?*
 
 ```java
 class Example {
-    private boolean calculated;
+    private boolean condition;
     
     public static void main(String[] args) throws InterruptedException {
         Thread t1 = new Thread(() -> {
-            calculated = true;
+            condition = true;
         });
         
         Thread t2 = new Thread(() -> {
-            if (calculated) {
-                System.out.println("42");
+            if (condition) {
+                System.out.println("true");
             } else {
-                System.out.println("calculating...");
+                System.out.println("false");
             }
         });
-
-        System.out.println(
-                "The Answer to the Ultimate Question of Life, " +
-                "the Universe, and Everything:"
-        );
         
         t1.start();
         t1.join();
@@ -884,8 +880,8 @@ class Example {
 <details>
     <summary>The Answer</summary>
 
-A: *Only "42" will be printed because any actions in a thread happens-before any other actions 
-after `Thread.join`,regardless of whether the `calculated` field is `volatile` or not.*
+A: *Only "true" will be printed because any actions in a thread happens-before any other actions 
+after `Thread.join`,regardless of whether the `condition` field is `volatile` or not.*
 
 [JCP]:
 
@@ -893,6 +889,48 @@ after `Thread.join`,regardless of whether the `calculated` field is `volatile` o
 > - **Thread termination rule**. Any action in a thread *happens-before* any other thread detects
 > that thread has terminated, either by successfully return from `Thread.join` or by 
 > `Thread.isAlive` returning false.
+
+</details>
+
+<br/>
+
+<details>
+    <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
+
+Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
+
+```java
+class Universe {
+    private boolean calculated;
+    
+    public static void main(String[] args) throws InterruptedException {
+        Thread deepThought = new Thread(() -> {
+            calculateInSevenAndHalfMillionYears(); // really long calculation
+            calculated = true;
+        });
+        
+        Thread thoseAsking = new Thread(() -> {
+            if (calculated) {
+                System.out.println("42");
+            } else {
+                System.out.println("calculating...");
+            }
+        });
+
+        System.out.println(
+                "The Answer to the Ultimate Question of Life, " +
+                "the Universe, and Everything:"
+        );
+
+        deepThought.start();
+        deepThought.join();
+        thoseAsking.start();
+    }
+}
+```
+
+A: *Only "42" will be printed because any actions in a thread happens-before any other actions
+after `Thread.join`,regardless of whether the `calculated` field is `volatile` or not.*
 
 </details>
 
@@ -1074,6 +1112,176 @@ Are there any risks when using `Object.notify`?*
 > Note that within `synchronized` methods, the order in which a `notifyAll` is placed does not 
 > matter. No awakened threads will be able to continue until the synchronization lock is released. 
 > Just as a matter of style, most people put notifications last in method bodies.
+
+</details>
+
+#### 3.9 Waiting thread (spurious wakeups) <a name="q-3-9"/>
+
+Q: *What might the following code print?*
+
+```java
+class Example {
+    final Object monitor = new Object();
+    volatile boolean calculated;
+    
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> {
+            synchronized (monitor) {
+                monitor.wait();
+            }
+            
+            if (calculated) {
+                System.out.println("true");
+            } else {
+                System.out.println("false");
+            }
+        });
+
+        t1.start();
+        
+        Thread t2 = new Thread(() -> {
+            calculated = longCalculation();
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        });
+
+        t2.start();
+    }
+}
+```
+
+<details>
+    <summary>The Answer</summary>
+
+A: *It is possible to print "false" because the waiting thread may wake up spuriously.*
+
+```java
+class Example {
+    final Object monitor = new Object();
+    volatile boolean calculated;
+    
+    public static void main(String[] args) {
+        Thread t1 = new Thread(() -> {
+            synchronized (monitor) {
+                while (!calculated) {
+                    monitor.wait();
+                }
+            }
+        });
+
+        t1.start();
+        
+        Thread t2 = new Thread(() -> {
+            calculated = longCalculation();
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        });
+
+        t2.start();
+    }
+}
+```
+
+[JCP]:
+
+> When your thread is awakened because someone called notifyAll, that doesn’t
+> mean that the condition predicate you were waiting for is now true. (This is like
+> having your toaster and coffee maker share a single bell; when it rings, you still
+> have to look to see which device raised the signal.)<sup>7<sup/> Additionally, wait is even
+> allowed to return “spuriously”—not in response to any thread calling notify.<sup>8</sup>
+> 
+> <sub> 7. This situation actually describes Tim’s kitchen pretty well; so many devices beep that when you
+> hear one, you have to inspect the toaster, the microwave, the coffee maker, and several others to
+> determine the cause of the signal.</sub>
+> <sub> 8. To push the breakfast analogy way too far, this is like a toaster with a loose connection that makes
+> the bell go off when the toast is ready but also sometimes when it is not ready.</sub>
+
+[CPJ]:
+
+> As of this writing, the JLS does not specifically acknowledge that spurious wakeups may occur. However,
+> many JVM implementations are constructed using system routines (for example POSIX thread libraries) in
+> which spurious wakeups are permitted and are known to occur.
+
+</details>
+
+<br/>
+
+<details>
+    <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
+
+Q: *Don't PANIC? What might the following code print?*
+
+```java
+class Universe {
+    final Object monitor = new Object();
+    volatile boolean calculated;
+    
+    public static void main(String[] args) {
+        Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
+            System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
+            synchronized (monitor) {
+                monitor.wait();
+            }
+            
+            if (calculated) {
+                System.out.println("Celebrating!");
+            } else {
+                System.out.println("PANIC!!!");
+            }
+        });
+
+        hyperIntelligentPanDimensionalBeings.start();
+        
+        Thread theFirstGreatestComputerEver = new Thread(() -> {
+            calculated = reallyLongCalculation();
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        });
+
+        theFirstGreatestComputerEver.start();
+    }
+}
+```
+
+<details>
+    <summary>The Answer</summary>
+
+A: *It is possible to print "PANIC!!!" because the waiting thread may wake up spuriously.*
+
+```java
+class Universe {
+    final Object monitor = new Object();
+    volatile boolean calculated;
+    
+    public static void main(String[] args) {
+        Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
+            System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
+            synchronized (monitor) {
+                while(!calculated) {
+                    monitor.wait();
+                }
+            }
+            System.out.println("Celebrating!");
+        });
+
+        hyperIntelligentPanDimensionalBeings.start();
+        
+        Thread theFirstGreatestComputerEver = new Thread(() -> {
+            calculated = reallyLongCalculation();
+            synchronized (monitor) {
+                monitor.notifyAll();
+            }
+        });
+
+        theFirstGreatestComputerEver.start();
+    }
+}
+```
+
+</details>
 
 </details>
 
