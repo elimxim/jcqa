@@ -925,6 +925,8 @@ class Somewhere {
         deepThought.start();
         deepThought.join();
         thoseAsking.start();
+
+        // ...
     }
 }
 ```
