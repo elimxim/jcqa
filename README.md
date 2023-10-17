@@ -306,7 +306,7 @@ class RearrangeableArray<Integer> {
             Integer item = null;
             synchronized(array) {
                 if (i < array.size()) {
-                  item = array.get(i);
+                    item = array.get(i);
                 } else {
                     break;
                 }
@@ -584,7 +584,7 @@ class Cell {
 
 #### 2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup> <a name="q-2-1"/> [&#11016;](#toc)
 
-Q: **Is the `Counter` class thread-safe?
+Q: *Is the `Counter` class thread-safe?*
 
 ```java
 class Counter {
@@ -802,7 +802,7 @@ class Example {
 
 A: *"Hello" will be printed infinitely until the program is stopped because `Thread.run` doesn't start the thread.*
 
-</details>>
+</details>
 
 #### 3.3 Reusing a thread <a name="q-3-3"/> [&#11016;](#toc)
 
