@@ -1339,7 +1339,7 @@ From javadoc:
 
 #### 5.1 Immutable classes <sup>&laquo;used&raquo;</sup> <a name="q-5-1"/> [&#11016;](#toc)
 
-Q1: *Does the `ElectricVehicle` class is immutable?
+Q: *Does the `ElectricVehicle` class is immutable?
 What are the advantages of immutable objects in concurrent environment?*
 
 ```java
