@@ -881,7 +881,7 @@ class Example {
     <summary>The Answer</summary>
 
 A: *Only "true" will be printed because any actions in a thread happens-before any other actions 
-after `Thread.join`,regardless of whether the `condition` field is `volatile` or not.*
+after `Thread.join`, regardless of whether the `condition` field is `volatile` or not.*
 
 [JCP]:
 
