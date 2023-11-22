@@ -255,7 +255,7 @@ because both `getClass()` expressions return corresponding `Class` instances.*
 
 #### 1.6 Read-write locks <a name="q-1-6"/> [&#11016;](#toc)
 
-Q: "Is the `Vehicle` class thread-safe?"
+Q: *Is the `Vehicle` class thread-safe?*
 
 ```java
 public class Vehicle {
