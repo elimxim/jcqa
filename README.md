@@ -408,7 +408,7 @@ A: *The above code is deadlock-prone. The solution is to avoid locking on method
 [JCP]:
 
 > How can `transferMoney` deadlock? It may appear as if all the threads acquire their locks in the same order, 
-> but in fact the lock order depends on the order of arguments passed to transferMoney, and these in turn might 
+> but in fact the lock order depends on the order of arguments passed to `transferMoney`, and these in turn might 
 > depend on external inputs. Deadlock can occur if two threads call `transferMoney` at the same time, 
 > one transferring from X to Y, and the other doing the opposite:
 > 
