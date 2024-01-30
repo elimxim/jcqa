@@ -548,7 +548,7 @@ class Cell {
         }
     }
     
-    synchronized boolean swapValue(Cell other) {
+    boolean swapValue(Cell other) {
         if (other == this) {  // alias check
             return true;
         }
