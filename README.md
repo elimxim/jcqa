@@ -1,6 +1,6 @@
 # Java Concurrency Interview Questions
 
-This is a collection of questions that I heard during an interviews or found while reading.
+A collection of Java concurrency questions commonly asked in interviews.
 
 ---
 
@@ -16,83 +16,85 @@ This is a collection of questions that I heard during an interviews or found whi
     - [1.5 Using `getClass()`](#q-1-5)
     - [1.6 Read-write locks](#q-1-6)
     - [1.7 Task &laquo;Print array&raquo;](#q-1-7)
-    - [1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup>](#q-1-8)
+    - [1.8 Task &laquo;Money transfer&raquo;](#q-1-8)
     - [1.9 Task &laquo;Swap value&raquo;](#q-1-9)
   - [2. The keyword `volatile`](#q-2)
-    - [2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup>](#q-2-1)
-    - [2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup>](#q-2-2)
+    - [2.1 `volatile` atomicity](#q-2-1)
+    - [2.2 `volatile` visibility](#q-2-2)
     - [2.3 `volatile` object](#q-2-3)
   - [3. The class `java.lang.Thread` and synchronization primitives of the `Object` class](#q-3)
-    - [3.1 Starting a thread <sup>&laquo;used&raquo;</sup>](#q-3-1)
-    - [3.2 Running a thread <sup>&laquo;used&raquo;</sup>](#q-3-2)
+    - [3.1 Starting a thread](#q-3-1)
+    - [3.2 Running a thread](#q-3-2)
     - [3.3 Reusing a thread](#q-3-3)
-    - [3.4 Stopping a thread <sup>&laquo;used&raquo;</sup>](#q-3-4)
+    - [3.4 Stopping a thread](#q-3-4)
     - [3.5 Joining a thread](#q-3-5)
-    - [3.6 Waiting a thread](#q-3-6)
+    - [3.6 Waiting on a thread](#q-3-6)
     - [3.7 Notifying a thread](#q-3-7)
-    - [3.8 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup>](#q-3-8`)
-    - [3.9 `Object.notify` vs `Object.notifyAll` <sup>&laquo;used&raquo;</sup>](#q-3-9)
+    - [3.8 `Thread.sleep` vs `Object.wait`](#q-3-8)
+    - [3.9 `Object.notify` vs `Object.notifyAll`](#q-3-9)
   - [4. The package `java.util.concurrent`](#q-4)
-    - [4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup>](#q-4-1)
+    - [4.1 Executor Service `shutdown` vs `shutdownNow`](#q-4-1)
   - [5. Safe publication](#q-5)
-    - [5.1 Immutable classes <sup>&laquo;used&raquo;</sup>](#q-5-1)
-    - [5.2 Lazy loading <sup>&laquo;used&raquo;</sup>](#q-5-2)
-    - [5.3 Double-checked locking <sup>&laquo;used&raquo;</sup>](#q-5-3)
+    - [5.1 Immutable classes](#q-5-1)
+    - [5.2 Lazy loading](#q-5-2)
+    - [5.3 Double-checked locking](#q-5-3)
 
 
-## Motivation <a name="motivation"/>
+## Motivation <a name="motivation"></a>
 
-After many interviews where I acted as an interviewer, I heard a lot of questions from my colleagues 
-about concurrency in Java, which they asked interviewees. I found those interview questions and tasks fascinating.
-And a few years ago I happened to see the origins of those interview questions and tasks while I was reading 
-two ancient books about concurrency in Java.
+After years of sitting on the interviewer's side of the table, I noticed that the Java concurrency questions 
+interviewers ask tend to circulate as folklore. Passed from one interview to the next, they're often used without anyone 
+recalling where they came from or what they were really meant to probe. The weak ones are gotchas; the good ones 
+all test the same thing: whether a candidate reasons about the Java Memory Model, or has merely memorized 
+that `volatile` "makes a field thread-safe".
 
-There are those two books:
+Eventually I traced almost all of them back to two books:
 
 | Name                                                                          | Author      | Year of publication |
 |-------------------------------------------------------------------------------|-------------|---------------------|
-| Java Concurrency in Practice                                                  | Brian Goetz | 2006                |
 | Concurrent Programming in Java Second Edition: Design Principles and Patterns | Doug Lea    | 1999                |
+| Java Concurrency in Practice                                                  | Brian Goetz | 2006                |
 
-After reading these books a while later, I thought it would be great to accumulate 
-all the interview questions in one place.
+Seen through these books, the questions stop being trivia. Each one is a concrete instance of a principle — 
+intrinsic lock reentrancy, happens-before, safe publication — and is far more valuable for teaching that principle 
+than as a pass/fail filter. I collected them here so each question can be studied alongside the source 
+that explains *why* the answer is what it is.
 
-There are many quotes from these books here. To easily identify which quote is from which book, 
-there are two main footnotes:
+This collection contains many quotes from these books. To make it easy to tell which quote comes from which book, 
+I use two footnote markers:
 
 - `[JCP]: "quote"` - means the quote is from "Java Concurrency in Practice"
 - `[CPJ]: "quote"` - means the quote is from "Concurrent Programming in Java ..."
 
-## Questions <a name="questions"/>
+## Questions <a name="questions"></a>
 
-There are questions of varying difficulty here. The questions that I heard or used during interviews
-are marked as: "a question" <sup>&laquo;used&raquo;</sup>. The answers follow the questions,
+The questions here vary in difficulty. The answers follow each question,
 but they are hidden to avoid spoilers.
 
-There are 5 main topics that contain a number of questions:
+There are five main topics, each containing a number of questions:
 
-- the keyword `synchornized`
+- the keyword `synchronized`
 - the keyword `volatile`
-- the class `java.lang.Thread`
 - the class `java.lang.Thread` and synchronization primitives of the `Object` class
+- the package `java.util.concurrent`
 - safe publication
 
-### 1. The keyword `synchronized` <a name="q-1"/>
+### 1. The keyword `synchronized` <a name="q-1"></a>
 
-#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"/> [&#11016;](#toc)
+#### 1.1 Intrinsic lock reentrancy <a name="q-1-1"></a> [&#11016;](#toc)
 
-Q: *What happens if the synchronized `pressEngineButton` method calls the `startEngine` method which is also synchronized?*
+Q: *What happens if the synchronized `logWithTime` method calls the `log` method which is also synchronized?*
 
 ```java
-class Vehicle {
-    public synchronized void startEngine() {
+class Logger {
+    public synchronized void log(String message) {
         // ...
     }
 }
 
-class ModernCar extends Vehicle {
-    public synchronized void pressEngineButton() {
-        super.startEngine();
+class TimestampLogger extends Logger {
+    public synchronized void logWithTime(String message) {
+        super.log("[" + now() + "] " + message);
     }
 }
 ```
@@ -100,21 +102,21 @@ class ModernCar extends Vehicle {
 <details>
     <summary>The Answer</summary>
 
-This is kind of a dumb question, but I find it interesting because lock reentry is not a default feature.
+This is kind of a dumb question, but I find it interesting because lock reentrancy is not a given.
 
-A: *Nothing bad will happen. The `startEngine` method will be invoked without problems.*
+A: *Nothing bad will happen. The `log` method will be invoked without problems.*
 
 Intrinsic locking in Java, defined by the `synchronized` keyword, is reentrant. Otherwise, 
-in the example above would cause a deadlock when the `pressEngineButton` calls the `startEngine`.
+the example above would cause a deadlock when `logWithTime` calls `log`.
 
 [JCP]:
 
-> When a thread requests a lock that is already help by another thread, the requesting thread blocks.
-> But because lock are *reentrant*, if a thread tries to acquire a lock that *it* already holds, 
-> the requests succeeds. Reentrancy means that locks are acquired on a per-thread rather
-> the per-invocation<sup>[7]</sup>. Reentrancy is implemented by associating with each lock 
+> When a thread requests a lock that is already held by another thread, the requesting thread blocks.
+> But because locks are *reentrant*, if a thread tries to acquire a lock that *it* already holds, 
+> the request succeeds. Reentrancy means that locks are acquired on a per-thread rather than
+> per-invocation basis<sup>[7]</sup>. Reentrancy is implemented by associating with each lock 
 > an acquisition count and an owning thread. When the count is zero, the lock is considered unheld.
-> When a thread acquires a previously unheld lock, the JVM records the owner and sets the acquisition to one.
+> When a thread acquires a previously unheld lock, the JVM records the owner and sets the acquisition count to one.
 > If the same thread acquires the lock again, the count is incremented, and when the owning thread exits, 
 > the `synchronized` block, the count is decremented. When the count reaches zero, the lock is released.
 > 
@@ -123,20 +125,20 @@ in the example above would cause a deadlock when the `pressEngineButton` calls t
 
 </details>
 
-#### 1.2 Synchronized method overriding <a name="q-1-2"/> [&#11016;](#toc)
+#### 1.2 Synchronized method overriding <a name="q-1-2"></a> [&#11016;](#toc)
 
-Q: *What happens if the `move` method of the `Car` class is called by multiple threads at the same time?*
+Q: *What happens if the `increment` method of the `FastCounter` class is called by multiple threads at the same time?*
 
 ```java
-class Vehicle {
-    public synchronized void move() {
+class Counter {
+    public synchronized void increment() {
         // ...
     }
 }
 
-class Car extends Vehicle {
+class FastCounter extends Counter {
     @Override
-    public void move() {
+    public void increment() {
         // ...
     }
 }
@@ -145,8 +147,8 @@ class Car extends Vehicle {
 <details>
     <summary>The Answer</summary>
 
-A: *Since `synchronized` modifier isn't inherited when subclasses override superclass methods, 
-the `Car.move` method is not thread-safe.*
+A: *Since the `synchronized` modifier isn't inherited when subclasses override superclass methods, 
+the `FastCounter.increment` method is not thread-safe.*
 
 [CPJ]:
 
@@ -157,7 +159,7 @@ the `Car.move` method is not thread-safe.*
 
 </details>
 
-#### 1.3 Static fields synchronization <a name="q-1-3"/> [&#11016;](#toc)
+#### 1.3 Static fields synchronization <a name="q-1-3"></a> [&#11016;](#toc)
 
 Q: *Is the `CountHolder` class thread-safe?*
 
@@ -178,26 +180,26 @@ class CountHolder {
 <details>
     <summary>The Answer</summary>
 
-A: *The `CountHolder` class isn't thread-sage, because object locking doesn't protect `static` fields.*
+A: *The `CountHolder` class isn't thread-safe, because object locking doesn't protect `static` fields.*
 
 [CPJ]:
 
 > Locking an object does *not* automatically protect access to `static` fields of that object's class
 > or any of its superclasses. Access to `static` fields is instead protected via `synchronized static` methods
-> and blocks. Static synchronization employs the lock processed by the `Class` object associated with the
+> and blocks. Static synchronization employs the lock possessed by the `Class` object associated with the
 > class the static methods are declared in.
 
 </details>
 
-#### 1.4 Inner class lock <a name="q-1-4"/> [&#11016;](#toc)
+#### 1.4 Inner class lock <a name="q-1-4"></a>[&#11016;](#toc)
 
 Q: *Can an inner class use a lock of its outer class?*
 
 <details>
     <summary>The Answer</summary>
 
-A: *An inner class has independent locking of its outer class, but a non-static inner class can use 
-a lock of its outer class with: `synchronized(OuterClass.this)`.*
+A: *An inner class's locking is independent of its outer class, but a non-static inner class can use 
+the lock of its outer class with: `synchronized(OuterClass.this)`.*
 
 [CPJ]:
 
@@ -208,32 +210,32 @@ a lock of its outer class with: `synchronized(OuterClass.this)`.*
 
 </details>
 
-#### 1.5 Using `getClass()` <a name="q-1-5"/> [&#11016;](#toc)
+#### 1.5 Using `getClass()` <a name="q-1-5"></a> [&#11016;](#toc)
 
 Q: *What is the danger of synchronization in the following code and is it wrong in the example below?*
 
 ```java
-class Vehicle {
-    private static int systemStatus;
+class Cache {
+    private static int size;
 
-    public void checkSystem() {
+    public void clear() {
         synchronized (getClass()) {
             // ...
-            systemStatus = 1; // OK
+            size = 0; // OK
         }
     }
 }
 
-class Car extends Vehicle {
-    private static int systemStatus;
+class DiskCache extends Cache {
+    private static int size;
 
     @Override
-    public void checkSystem() {
-        super.checkSystem();
+    public void clear() {
+        super.clear();
         
         synchronized (getClass()) {
             // ...
-            systemStatus = 1; // OK
+            size = 0; // OK
         }
     }
 }
@@ -242,8 +244,8 @@ class Car extends Vehicle {
 <details>
     <summary>The Answer</summary>
 
-A: *Using `synchronized(getClass())` increases complexity of the code. The above example is correct
-because both `getClass()` expressions return corresponding `Class` instances.*
+A: *Using `synchronized(getClass())` increases the complexity of the code. The above example is correct
+because both `getClass()` expressions return the corresponding `Class` instances.*
 
 [CPJ]:
 
@@ -253,26 +255,26 @@ because both `getClass()` expressions return corresponding `Class` instances.*
 
 </details>
 
-#### 1.6 Read-write locks <a name="q-1-6"/> [&#11016;](#toc)
+#### 1.6 Read-write locks <a name="q-1-6"></a> [&#11016;](#toc)
 
-Q: *Is the `Vehicle` class thread-safe?*
+Q: *Is the `Settings` class thread-safe?*
 
 ```java
-public class Vehicle {
+public class Settings {
     private final Object readLock = new Object();
     private final Object writeLock = new Object();
 
-    private String name;
+    private String theme;
     
-    public String getName() {
+    public String getTheme() {
         synchronized (readLock) {
-            return this.name;
+            return this.theme;
         }
     }
     
-    public void setName(String s) {
+    public void setTheme(String s) {
         synchronized (writeLock) {
-            this.name = s;
+            this.theme = s;
         }
     }
 }
@@ -281,11 +283,11 @@ public class Vehicle {
 <details>
     <summary>The Answer</summary>
 
-A: *The `Vehicle` class isn't thread-safe, because different locks are used to read and write the `name` field.*
+A: *The `Settings` class isn't thread-safe, because different locks are used to read and write the `theme` field.*
 
 </details>
 
-#### 1.7 Task &laquo;Print array&raquo; <a name="q-1-7"/> [&#11016;](#toc)
+#### 1.7 Task &laquo;Print array&raquo; <a name="q-1-7"></a> [&#11016;](#toc)
 
 Q: *The implementation of the `print` method isn't consistent: the method might print the same element 
 twice if another thread rearranges elements. How to fix this method?*
@@ -348,7 +350,7 @@ class RearrangeableArray<Integer> {
         }
         
         for (int i = 0; i < snapshot.size(); i++) {
-            System.out.println(array.get(i));
+            System.out.println(snapshot.get(i));
         }
     }
 }
@@ -356,12 +358,12 @@ class RearrangeableArray<Integer> {
 
 </details>
 
-#### 1.8 Task &laquo;Money transfer&raquo; <sup>&laquo;used&raquo;</sup> <a name="q-1-8"/> [&#11016;](#toc)
+#### 1.8 Task &laquo;Money transfer&raquo; <a name="q-1-8"></a> [&#11016;](#toc)
 
 Q: *What problem might occur in the following code? How to fix it?*
 
 ```java
-@NotTreadSafe
+@NotThreadSafe
 class Account {
     private BigDecimal balance;
 
@@ -369,7 +371,7 @@ class Account {
         this.balance = initial;
     }
     
-    public balance getBalance() {
+    public BigDecimal getBalance() {
         return balance;
     }
     
@@ -418,10 +420,10 @@ A: *The above code is deadlock-prone. The solution is to avoid locking on method
 > With unlucky timing, A will acquire the lock on `myAccount` and wait for the lock on `yourAccount`, 
 > while B is holding the lock on `yourAccount` and waiting for the lock on `myAccount`.
 
-*For example using `ReentranLock`:*
+*For example using `ReentrantLock`:*
 
 ```java
-@NotTreadSafe
+@NotThreadSafe
 class Account {
     public final ReentrantLock lock = new ReentrantLock();
     
@@ -444,7 +446,7 @@ class Account {
     }
 }
 
-@TreadSafe
+@ThreadSafe
 class Accountant {
     public void transferMoney(Account fromAccount, Account toAccount, BigDecimal amount) {
         if (fromAccount == toAccount) { // alias check
@@ -475,12 +477,12 @@ class Accountant {
 
 </details>
 
-#### 1.9 Task &laquo;Swap value&raquo; <a name="q-1-9"/> [&#11016;](#toc)
+#### 1.9 Task &laquo;Swap value&raquo; <a name="q-1-9"></a> [&#11016;](#toc)
 
 Q: *What problem might occur in the following code? How to fix it?*
 
 ```java
-@TreadSafe
+@ThreadSafe
 class Cell {
     private long value;
     
@@ -521,10 +523,10 @@ A: *The above code is deadlock-prone. The solution is to avoid locking on method
 > | block waiting for lock for `b` on entering `v = other.getValue()`   | pass lock for `b` (since already held) on entering `t = getValue()` |
 > |                                                                     | block waiting for lock for `a` on entering `v = other.getValue()`   |
 
-*For example using `ReentranLock` and changing the method to return a `boolean` value:*
+*For example using `ReentrantLock` and changing the method to return a `boolean` value:*
 
 ```java
-@TreadSafe
+@ThreadSafe
 class Cell {
     private final ReentrantLock lock = new ReentrantLock();
     
@@ -580,9 +582,9 @@ class Cell {
 
 </details>
 
-### 2. The keyword `volatile` <a name="q-2"/>
+### 2. The keyword `volatile` <a name="q-2"></a>
 
-#### 2.1 `volatile` atomicity <sup>&laquo;used&raquo;</sup> <a name="q-2-1"/> [&#11016;](#toc)
+#### 2.1 `volatile` atomicity <a name="q-2-1"></a> [&#11016;](#toc)
 
 Q: *Is the `Counter` class thread-safe?*
 
@@ -633,7 +635,7 @@ can only guarantee visibility, not atomicity.*
 
 </details>
 
-#### 2.2 `volatile` visibility <sup>&laquo;used&raquo;</sup> <a name="q-2-2"/> [&#11016;](#toc)
+#### 2.2 `volatile` visibility <a name="q-2-2"></a> [&#11016;](#toc)
 
 Q: *What can `T2` print in "Example 1"? Will anything change if `b` becomes 
 a `volatile` variable as in the "Example 2"?*
@@ -671,9 +673,9 @@ Action:
 <details>
     <summary>The Answer</summary>
 
-A: *In "Example 1" there could be all the options because `T2` may see the changed `b` 
-but not see the changed `a` or vice versa, or will not be able to see all the changes, 
-or will be able to see all the changes. In "Example 2" only one option is available.*
+A: *In "Example 1" all options are possible, because `T2` may see the changed `b` 
+but not the changed `a`, or vice versa, or none of the changes, or all of them. 
+In "Example 2" only one option is possible.*
 
 *Example 1:*
 
@@ -740,20 +742,20 @@ or will be able to see all the changes. In "Example 2" only one option is availa
 
 </details>
 
-#### 2.3 `volatile` object <a name="q-2-3"/> [&#11016;](#toc)
+#### 2.3 `volatile` object <a name="q-2-3"></a> [&#11016;](#toc)
 
-Q: *Is the `Vehicle` class thread-safe?*
+Q: *Is the `User` class thread-safe?*
 
 ```java
-class ExtraInfo {
-    String code;
+class Address {
+    String city;
 }
 
-class Vehicle {
-    volatile ExtraInfo info;
+class User {
+    volatile Address address;
 
-    public setCode(String s) {
-        info.code = s;
+    public void setCity(String s) {
+        address.city = s;
     }
 }
 ```
@@ -765,9 +767,9 @@ A: *The `volatile` keyword doesn't guarantee "happens-before" inside objects.*
 
 </details>
 
-### 3. The class `java.lang.Thread` and synchronization primitives of the `Object` class <a name="q-3"/>
+### 3. The class `java.lang.Thread` and synchronization primitives of the `Object` class <a name="q-3"></a>
 
-#### 3.1 Starting a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-1"/> [&#11016;](#toc)
+#### 3.1 Starting a thread <a name="q-3-1"></a> [&#11016;](#toc)
 
 Q: *How to start a new thread?*
 
@@ -778,50 +780,47 @@ A: *Create an instance of `Thread` class and call the `start` method.*
 
 </details>
 
-#### 3.2 Running a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-2"/> [&#11016;](#toc)
+#### 3.2 Running a thread <a name="q-3-2"></a> [&#11016;](#toc)
 
-Q: *How many times “Hello!” will it be printed?*
+Q: *How many times will “Hello!” be printed?*
 
 ```java
-class Example {
-    public static void main(String[] args) {
-        Thread t = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                System.out.print("Hello!");
-            }
-        });
-
-        t.interrupt();
-        t.run();
-    }
+public static void main(String[] args) {
+    Thread t = new Thread(() -> {
+        while (!Thread.currentThread().isInterrupted()) {
+            System.out.print("Hello!");
+        }
+    });
+ 
+    t.interrupt();
+    t.run();
 }
 ```
 
 <details>
     <summary>The Answer</summary>
 
-A: *"Hello" will be printed infinitely until the program is stopped because `Thread.run` doesn't start the thread.*
+A: *"Hello!" will be printed infinitely until the program is stopped, because `Thread.run` doesn't start a new thread.*
 
 </details>
 
-#### 3.3 Reusing a thread <a name="q-3-3"/> [&#11016;](#toc)
+#### 3.3 Reusing a thread <a name="q-3-3"></a> [&#11016;](#toc)
 
-Q: *How many times “Hello!” will it be printed?*
+Q: *How many times will “Hello!” be printed?*
 
 ```java
-class Example {
-    public static void main(String[] args) throws InterruptedException {
-        Thread t = new Thread(() -> {
-            System.out.println("Hello!");
-        });
-        
-        t.start();
-        t.join();
-        
-        t.start();
-        t.join();
-    }
+public static void main(String[] args) throws InterruptedException {
+    Thread t = new Thread(() -> {
+        System.out.println("Hello!");
+    });
+    
+    t.start();
+    t.join();
+     
+    t.start();
+    t.join();
 }
+
 ```
 
 <details>
@@ -831,7 +830,7 @@ A: *"Hello!" will be printed once and an exception will be thrown because a thre
 
 </details>
 
-#### 3.4 Stopping a thread <sup>&laquo;used&raquo;</sup> <a name="q-3-4"/> [&#11016;](#toc)
+#### 3.4 Stopping a thread <a name="q-3-4"></a> [&#11016;](#toc)
 
 Q: *How to stop a thread?*
 
@@ -849,39 +848,37 @@ interruption mechanism can be used.*
 
 </details>
 
-#### 3.5 Joining a thread <a name="q-3-5"/> [&#11016;](#toc)
+#### 3.5 Joining a thread <a name="q-3-5"></a> [&#11016;](#toc)
 
 Q: *What might the following code print? What can be printed if the `condition` field is `volatile`?*
 
 ```java
-class Example {
-    private static boolean condition;
+private static boolean condition;
+
+public static void main(String[] args) throws InterruptedException {
+    Thread t1 = new Thread(() -> {
+        condition = true;
+    });
     
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Thread(() -> {
-            condition = true;
-        });
-        
-        Thread t2 = new Thread(() -> {
-            if (condition) {
-                System.out.println("true");
-            } else {
-                System.out.println("false");
-            }
-        });
-        
-        t1.start();
-        t1.join();
-        t2.start();
-    }
+    Thread t2 = new Thread(() -> {
+        if (condition) {
+            System.out.println("true");
+        } else {
+            System.out.println("false");
+        }
+    });
+    
+    t1.start();
+    t1.join();
+    t2.start();
 }
 ```
 
 <details>
     <summary>The Answer</summary>
 
-A: *Only "true" will be printed because any actions in a thread happens-before any other actions 
-after `Thread.join`, regardless of whether the `condition` field is `volatile` or not.*
+A: *Only "true" will be printed, because all actions in a thread happen-before any action in another thread 
+that follows a successful return from `Thread.join`, regardless of whether the `condition` field is `volatile` or not.*
 
 [JCP]:
 
@@ -893,7 +890,7 @@ after `Thread.join`, regardless of whether the `condition` field is `volatile` o
 </details>
 
 <details>
-    <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
+    <summary>Hitchhiker's version</summary>
 
 Q: *What might the following code print? What can be printed if the `calculated` field is `volatile`?*
 
@@ -934,14 +931,14 @@ class Somewhere {
 <details>
     <summary>The Answer</summary>
 
-A: *Only "42" will be printed because any actions in a thread happens-before any other actions
-after `Thread.join`,regardless of whether the `calculated` field is `volatile` or not.*
+A: *Only "42" will be printed, because all actions in a thread happen-before any action in another thread
+that follows a successful return from `Thread.join`, regardless of whether the `calculated` field is `volatile` or not.*
 
 </details>
 
 </details>
 
-#### 3.6 Waiting a thread <a name="q-3-6"/> [&#11016;](#toc)
+#### 3.6 Waiting on a thread <a name="q-3-6"></a> [&#11016;](#toc)
 
 Q: *What might the following code print?*
 
@@ -1017,7 +1014,7 @@ class Example {
 > When your thread is awakened because someone called notifyAll, that doesn’t
 > mean that the condition predicate you were waiting for is now true. (This is like
 > having your toaster and coffee maker share a single bell; when it rings, you still
-> have to look to see which device raised the signal.)<sup>7<sup/> Additionally, wait is even
+> have to look to see which device raised the signal.)<sup>7</sup> Additionally, wait is even
 > allowed to return “spuriously”—not in response to any thread calling notify.<sup>8</sup>
 >
 > <sub> 7. This situation actually describes Tim’s kitchen pretty well; so many devices beep that when you
@@ -1035,7 +1032,7 @@ class Example {
 </details>
 
 <details>
-    <summary>Version for those who have read "The Hitchhiker's Guide To The Galaxy"</summary>
+    <summary>Hitchhiker's version</summary>
 
 Q: *Don't PANIC? What might the following code print?*
 
@@ -1048,7 +1045,7 @@ class MilkyWay {
         // ...
         
         Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
-            System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
+            System.out.println("Ask to produce The Ultimate Question to go with answer \"42\"");
             synchronized (Earth) {
                 try {
                     Earth.wait();
@@ -1094,7 +1091,7 @@ class MilkyWay {
         // ...
         
         Thread hyperIntelligentPanDimensionalBeings = new Thread(() -> {
-            System.out.ptintln("Ask to produce The Ultimate Question to go with answer \"42\"");
+            System.out.println("Ask to produce The Ultimate Question to go with answer \"42\"");
             synchronized (Earth) {
                 while(!calculated) {
                     try {
@@ -1127,34 +1124,32 @@ class MilkyWay {
 
 </details>
 
-#### 3.7 Notifying a thread <a name="q-3-7"/> [&#11016;](#toc)
+#### 3.7 Notifying a thread <a name="q-3-7"></a> [&#11016;](#toc)
 
 Q: *What will be printed?*
 
 ```java
-class Example {
-    private final Object monitor = new Object();
+private final Object monitor = new Object();
+
+public static void main(String[] args) throws InterruptedException {
+    Thread t1 = new Thread(() -> {
+        System.out.println("Step 1");
+        try {
+            monitor.wait();
+            System.out.println("Step 2");
+        } catch (InterruptedException ignore) { }
+    });
     
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Tread(() -> {
-            System.out.println("Step 1");
-            try {
-                monitor.wait();
-                System.out.println("Step 2");
-            } catch (InterruptedException ignore) { }
-        });
-        
-        Thread t2 = new Thread(() -> {
-            monitor.notifyAll();
-            System.out.println("Step 3");
-        });
-        
-        t1.start();
-        
-        Thread.sleep(1000);
-        
-        t2.start();
-    }
+    Thread t2 = new Thread(() -> {
+        monitor.notifyAll();
+        System.out.println("Step 3");
+    });
+    
+    t1.start();
+    
+    Thread.sleep(1000);
+    
+    t2.start();
 }
 ```
 
@@ -1166,39 +1161,37 @@ because in order to call the `wait()` and `notifyAll()` methods on an object,
 a lock on that object must be acquired.*
 
 ```java
-class Example {
-    private final Object monitor = new Object();
-    
-    public static void main(String[] args) throws InterruptedException {
-        Thread t1 = new Tread(() -> {
-            System.out.println("Step 1");
-            try {
-                synchronized(monitor) {
-                    monitor.wait();
-                }
-                System.out.println("Step 2");
-            } catch (InterruptedException ignore) { }
-        });
-        
-        Thread t2 = new Thread(() -> {
-            synchronized (monitor) {
-                monitor.notifyAll();
-                System.out.println("Step 3");
+private final Object monitor = new Object();
+
+public static void main(String[] args) throws InterruptedException {
+    Thread t1 = new Thread(() -> {
+        System.out.println("Step 1");
+        try {
+            synchronized(monitor) {
+                monitor.wait();
             }
-        });
-        
-        t1.start();
-        
-        Thread.sleep(1000);
-        
-        t2.start();
-    }
+            System.out.println("Step 2");
+        } catch (InterruptedException ignore) { }
+    });
+    
+    Thread t2 = new Thread(() -> {
+        synchronized (monitor) {
+            monitor.notifyAll();
+            System.out.println("Step 3");
+        }
+    });
+    
+    t1.start();
+    
+    Thread.sleep(1000);
+    
+    t2.start();
 }
 ```
 
 </details>
 
-#### 3.8 `Thread.sleep` vs `Object.wait` <sup>&laquo;used&raquo;</sup> <a name="q-3-8"/> [&#11016;](#toc)
+#### 3.8 `Thread.sleep` vs `Object.wait` <a name="q-3-8"></a> [&#11016;](#toc)
 
 Q: *What's the difference between `Thread.sleep` and `Object.wait`?*
 
@@ -1233,9 +1226,9 @@ From javadoc:
 
 </details>
 
-#### 3.9 `Object.notify` vs `Object.notifyAll` <sup>&laquo;used&raquo;</sup> <a name="q-3-9"/> [&#11016;](#toc)
+#### 3.9 `Object.notify` vs `Object.notifyAll` <a name="q-3-9"></a> [&#11016;](#toc)
 
-Q: *What's the difference between `Object.notify` and `Object.motifyAll`? 
+Q: *What's the difference between `Object.notify` and `Object.notifyAll`? 
 Are there any risks when using `Object.notify`?*
 
 <details>
@@ -1308,9 +1301,9 @@ Are there any risks when using `Object.notify`?*
 
 </details>
 
-### 4. The package `java.util.concurrent` <a name="q-4"/>
+### 4. The package `java.util.concurrent` <a name="q-4"></a>
 
-#### 4.1 Executor Service `shutdown` vs `shutdownNow` <sup>&laquo;used&raquo;</sup> <a name="q-4-1"/> [&#11016;](#toc)
+#### 4.1 Executor Service `shutdown` vs `shutdownNow` <a name="q-4-1"></a> [&#11016;](#toc)
 
 Q: *What is the difference between `ExecutorService.shutdown` and `ExecutorService.shutdownNow`?*
 
@@ -1335,33 +1328,33 @@ From javadoc:
 
 </details>
 
-### 5. Safe publication <a name="q-5"/>
+### 5. Safe publication <a name="q-5"></a>
 
-#### 5.1 Immutable classes <sup>&laquo;used&raquo;</sup> <a name="q-5-1"/> [&#11016;](#toc)
+#### 5.1 Immutable classes <a name="q-5-1"></a> [&#11016;](#toc)
 
-Q: *Does the `ElectricVehicle` class is immutable?
-What are the advantages of immutable objects in concurrent environment?*
+Q: *Is the `Message` class immutable?
+What are the advantages of immutable objects in a concurrent environment?*
 
 ```java
-class Battery {
-    private int power;
-    private int capacity;
+class Header {
+    private int priority;
+    private long timestamp;
     
-    public Battery(int initialPower, int initialCapacity) {
-        this.power = calculatePower(initialPower);
-        this.capacity = calculateCapacity(initialCapacity);
+    public Header(int priority, long timestamp) {
+        this.priority = priority;
+        this.timestamp = timestamp;
     }
     
     // getters & setters
 }
 
-class ElectricVehicle {
-    private final String name;
-    private final Battery battery;
+class Message {
+    private final String text;
+    private final Header header;
     
-    public Vehicle(String name, Battery battery) {
-        this.name = name;
-        this.battery = battery;
+    public Message(String text, Header header) {
+        this.text = text;
+        this.header = header;
     }
     
     // getters
@@ -1371,8 +1364,8 @@ class ElectricVehicle {
 <details>
     <summary>The Answer</summary>
 
-A: *The `ElectricVehicle` class isn't thread-safe because it contains the not tread-safe `Battery` class.
-Immutable objects are thread-safe and can be used by multiple threads.*
+A: *The `Message` class isn't immutable because it contains a mutable, non-thread-safe `Header` instance,
+so it isn't thread-safe either. Immutable objects are thread-safe and can be shared by multiple threads.*
 
 [JCP]:
 
@@ -1395,12 +1388,12 @@ Immutable objects are thread-safe and can be used by multiple threads.*
 
 </details>
 
-#### 5.2 Lazy loading <sup>&laquo;used&raquo;</sup> <a name="q-5-2"/> [&#11016;](#toc)
+#### 5.2 Lazy loading <a name="q-5-2"></a> [&#11016;](#toc)
 
 Q: *How to make the following lazy-load class thread-safe? The class is too large to preload.*
 
 ```java
-@NotTreadSafe
+@NotThreadSafe
 public class UnsafeLazyInitialization {
     private static Resource resource;
     
@@ -1413,10 +1406,10 @@ public class UnsafeLazyInitialization {
 }
 ```
 
-*This is not compliant:*
+*This doesn't meet the requirement, since it isn't lazy:*
 
 ```java
-@TreadSafe
+@ThreadSafe
 public class EagerInitialization {
     private static final Resource resource = new Resource();
     
@@ -1436,9 +1429,9 @@ A: *There are several options to make the lazy-load `Singleton` class thread-saf
 *Example 1:*
 
 ```java
-@TreadSafe
+@ThreadSafe
 public class SafeLazyInitialization {
-    private static Resource instance;
+    private static Resource resource;
     
     public synchronized static Resource getInstance() {
         if (resource == null) {
@@ -1460,7 +1453,7 @@ The above code is from [JCP].
 *Example 2:*
 
 ```java
-@TreadSafe
+@ThreadSafe
 public class ResourceFactory {
     private static class ResourceHolder {
         public static final Resource resource = new Resource();
@@ -1483,9 +1476,9 @@ The above code is from [JCP].
 
 </details>
 
-#### 5.3 Double-checked locking <sup>&laquo;used&raquo;</sup> <a name="q-5-3"/> [&#11016;](#toc)
+#### 5.3 Double-checked locking <a name="q-5-3"></a> [&#11016;](#toc)
 
-Q: *Is the following class tread-safe?*
+Q: *Is the following class thread-safe?*
 
 ```java
 public class DoubleCheckedLocking {
